@@ -5,7 +5,6 @@ from typing import List
 
 router = APIRouter()
 
-
 ## PREPARAÇÃO PARA O BANCO DE DADOS REAL:
 # Quando integrarmos com o PostgreSQL, esta lista
 # será substituída pelas consultas usando o SQLAlchemy 
@@ -18,7 +17,6 @@ def cadastrar_usuario(usuario: UsuarioCreate):
     """Cadastra um novo usuário com hash de senha e retorna os dados do usuário criado (sem a senha)
     FUTURO BANCO DE DADOS: A senha será armazenada de forma segura no banco de dados, e não retornada na resposta.
     """
-    # usuario_existente = db.query(UsuarioModel).filter(UsuarioModel.email == usuario.email).first()
     # Verifica se o email já está cadastrado
     for u in banco_de_usuarios_falso:
         if u["email"] == usuario.email:
@@ -43,12 +41,8 @@ def cadastrar_usuario(usuario: UsuarioCreate):
     
     return novo_usuario
 
-#Importamos e reutilizamos lista de usuarios do schema UsuarioResponse para retornar a lista de usuários   
-#(vamos atualizar para postgresql depois)
-from app.api.usuarios import banco_de_usuarios_falso
 
 @router.get("/usuarios", response_model=List[UsuarioResponse])
 def listar_usuarios():
     """Retorna a lista de todos os usuários cadastrados"""
     return banco_de_usuarios_falso
-    
