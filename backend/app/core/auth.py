@@ -8,6 +8,7 @@ from app.core.security import ALGORITHM, SECRET_KEY
 from app.models import UsuarioModel
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
+optional_oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token", auto_error=False)
 
 
 def get_current_user(
@@ -33,6 +34,24 @@ def get_current_user(
         raise credentials_exception
 
     return usuario
+
+
+def get_optional_current_user(
+    token: str | None = Depends(optional_oauth2_scheme),
+    db: Session = Depends(get_db),
+) -> UsuarioModel | None:
+    if token is None:
+        return None
+
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email = payload.get("sub")
+        if email is None:
+            return None
+    except JWTError:
+        return None
+
+    return db.query(UsuarioModel).filter(UsuarioModel.email == email).first()
 
 
 def get_current_active_user(usuario: UsuarioModel = Depends(get_current_user)) -> UsuarioModel:

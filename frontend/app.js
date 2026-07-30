@@ -5,12 +5,12 @@ const state = {
   leads: [],
   usuarios: [],
   clienteFilters: { nome: "", ativo: "" },
+  setupOpen: false,
   token: sessionStorage.getItem("lifeline_token"),
   usuario: null,
 };
 
 const els = {
-  apiBase: document.querySelector("#apiBase"),
   status: document.querySelector("#status"),
   viewTitle: document.querySelector("#viewTitle"),
   refreshButton: document.querySelector("#refreshButton"),
@@ -21,6 +21,7 @@ const els = {
   authView: document.querySelector("#authView"),
   privateArea: document.querySelector("#privateArea"),
   userBox: document.querySelector("#userBox"),
+  setupPanel: document.querySelector("#setupPanel"),
   loginForm: document.querySelector("#loginForm"),
   registerForm: document.querySelector("#registerForm"),
   clienteFilterForm: document.querySelector("#clienteFilterForm"),
@@ -32,6 +33,7 @@ const els = {
   clientesTable: document.querySelector("#clientesTable"),
   leadForm: document.querySelector("#leadForm"),
   kanbanBoard: document.querySelector("#kanbanBoard"),
+  usuarioCreateForm: document.querySelector("#usuarioCreateForm"),
   usuarioEditForm: document.querySelector("#usuarioEditForm"),
   cancelUsuarioEdit: document.querySelector("#cancelUsuarioEdit"),
   usuariosTable: document.querySelector("#usuariosTable"),
@@ -42,8 +44,10 @@ const els = {
   stageSummary: document.querySelector("#stageSummary"),
 };
 
+const API_BASE = window.LIFELINE_API_BASE || "http://127.0.0.1:8000";
+
 function apiUrl(path) {
-  return `${els.apiBase.value.replace(/\/$/, "")}${path}`;
+  return `${API_BASE.replace(/\/$/, "")}${path}`;
 }
 
 function money(value) {
@@ -115,6 +119,7 @@ function updateAuthUi() {
   els.authView.classList.toggle("hidden", authenticated);
   els.privateArea.classList.toggle("hidden", !authenticated);
   document.body.classList.toggle("logged-out", !authenticated);
+  els.setupPanel.classList.toggle("hidden", !state.setupOpen || authenticated);
 
   els.adminOnly.forEach((el) => el.classList.toggle("hidden", !isAdmin()));
   els.logoutButton.style.display = authenticated ? "block" : "none";
@@ -323,6 +328,8 @@ async function loadAll() {
 }
 
 async function hydrateSession() {
+  await loadSetupStatus();
+
   if (!state.token) {
     updateAuthUi();
     return;
@@ -335,6 +342,15 @@ async function hydrateSession() {
   } catch (error) {
     logout(false);
     setStatus(error.message);
+  }
+}
+
+async function loadSetupStatus() {
+  try {
+    const data = await request("/usuarios/setup-status");
+    state.setupOpen = Boolean(data.primeiro_acesso_aberto);
+  } catch {
+    state.setupOpen = false;
   }
 }
 
@@ -398,6 +414,22 @@ els.registerForm.addEventListener("submit", async (event) => {
     });
     els.registerForm.reset();
     await login(payload.email, payload.senha);
+  } catch (error) {
+    setStatus(error.message);
+  }
+});
+
+els.usuarioCreateForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const payload = formData(els.usuarioCreateForm);
+  try {
+    await request("/usuarios/", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+    els.usuarioCreateForm.reset();
+    await loadAll();
+    setStatus("Usuario criado.", true);
   } catch (error) {
     setStatus(error.message);
   }

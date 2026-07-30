@@ -28,6 +28,14 @@ body {
   letter-spacing: 0;
 }
 
+body.logged-out {
+  grid-template-columns: 1fr;
+}
+
+body.logged-out .sidebar {
+  display: none;
+}
+
 button,
 input,
 select {
@@ -94,12 +102,6 @@ nav {
   color: #fff;
 }
 
-.api-box {
-  margin-top: auto;
-  display: grid;
-  gap: 8px;
-}
-
 .user-box {
   display: grid;
   gap: 4px;
@@ -108,22 +110,6 @@ nav {
 }
 
 .user-box strong {
-  color: #fff;
-}
-
-.api-box label {
-  color: #cce3e5;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.api-box input {
-  width: 100%;
-  min-height: 38px;
-  border: 1px solid #31565d;
-  border-radius: 6px;
-  padding: 0 10px;
-  background: #0c1d22;
   color: #fff;
 }
 

@@ -46,9 +46,10 @@ def client():
     return TestClient(app)
 
 
-def create_user(client: TestClient, email: str, senha: str = "Senha123"):
+def create_user(client: TestClient, email: str, senha: str = "Senha123", headers: dict | None = None):
     return client.post(
         "/usuarios/",
+        headers=headers,
         json={"nome": "Usuario Teste", "email": email, "senha": senha},
     )
 

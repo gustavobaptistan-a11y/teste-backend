@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.core.auth import get_current_admin_user
+from app.core.auth import get_current_admin_user, get_optional_current_user
 from app.core.database import get_db
 from app.core.security import gerar_hash_senha
 from app.models import UsuarioModel
@@ -20,8 +20,12 @@ router = APIRouter(prefix="/usuarios", tags=["Usuarios"])
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=UsuarioResponse)
-def cadastrar_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):
-    """Cadastra usuario com senha protegida por hash."""
+def cadastrar_usuario(
+    usuario: UsuarioCreate,
+    db: Session = Depends(get_db),
+    usuario_logado: UsuarioModel | None = Depends(get_optional_current_user),
+):
+    """Cadastra usuario. Apenas o primeiro cadastro e publico."""
     usuario_existente = db.query(UsuarioModel).filter(UsuarioModel.email == usuario.email).first()
     if usuario_existente:
         raise HTTPException(
@@ -30,6 +34,13 @@ def cadastrar_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):
         )
 
     total_usuarios = db.query(UsuarioModel).count()
+    if total_usuarios > 0:
+        if not usuario_logado or not usuario_logado.ativo or usuario_logado.permissao != "Administrador":
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Cadastro de novos usuarios restrito a administradores.",
+            )
+
     permissao_inicial = "Administrador" if total_usuarios == 0 else "Usuario Comum"
 
     novo_usuario = UsuarioModel(
@@ -52,6 +63,12 @@ def cadastrar_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):
 
     db.refresh(novo_usuario)
     return novo_usuario
+
+
+@router.get("/setup-status")
+def obter_status_setup(db: Session = Depends(get_db)):
+    """Indica se o primeiro cadastro administrativo ainda esta aberto."""
+    return {"primeiro_acesso_aberto": db.query(UsuarioModel).count() == 0}
 
 
 @router.get("/", response_model=List[UsuarioResponse])

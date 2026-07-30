@@ -32,6 +32,9 @@ tecnica.
 - `docker-compose.yml` exige variaveis via `.env`, sem senha de banco hardcoded.
 - Token do frontend fica em `sessionStorage`, reduzindo persistencia apos fechar a aba.
 - Cadastro exige senha com no minimo 8 caracteres, maiuscula, minuscula e numero.
+- O formulario de primeiro acesso aparece apenas quando ainda nao existe usuario.
+- Depois do bootstrap inicial, somente administradores podem criar usuarios.
+- Configuracao da URL da API nao e exibida na tela de login.
 - Contas inativas nao conseguem autenticar.
 - Usuarios comuns recebem `403` ao acessar endpoints administrativos.
 - Senhas nunca sao retornadas pela API.

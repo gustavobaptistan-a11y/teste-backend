@@ -6,7 +6,7 @@
     <title>Lifeline One</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
-  <body>
+  <body class="logged-out">
     <aside class="sidebar">
       <div>
         <p class="eyebrow">Lifeline One</p>
@@ -20,10 +20,6 @@
       </nav>
       <div class="user-box" id="userBox"></div>
       <button id="logoutButton" class="nav-button" type="button">Sair</button>
-      <div class="api-box">
-        <label for="apiBase">API</label>
-        <input id="apiBase" type="url" value="http://127.0.0.1:8000" />
-      </div>
     </aside>
 
     <main class="app-shell">
@@ -36,14 +32,16 @@
             <input name="senha" type="password" placeholder="Senha" required />
             <button class="primary-button" type="submit">Entrar</button>
           </form>
-          <div class="divider"></div>
-          <p class="eyebrow">Primeiro acesso</p>
-          <form id="registerForm" class="auth-form">
-            <input name="nome" placeholder="Nome" required />
-            <input name="email" type="email" placeholder="E-mail" required />
-            <input name="senha" type="password" placeholder="Senha forte" minlength="8" required />
-            <button class="ghost-button" type="submit">Cadastrar usuario</button>
-          </form>
+          <section id="setupPanel" class="hidden">
+            <div class="divider"></div>
+            <p class="eyebrow">Primeiro acesso</p>
+            <form id="registerForm" class="auth-form">
+              <input name="nome" placeholder="Nome" required />
+              <input name="email" type="email" placeholder="E-mail" required />
+              <input name="senha" type="password" placeholder="Senha forte" minlength="8" required />
+              <button class="ghost-button" type="submit">Cadastrar administrador</button>
+            </form>
+          </section>
         </div>
       </section>
 
@@ -155,6 +153,13 @@
       </section>
 
       <section id="usuariosView" class="view">
+        <form id="usuarioCreateForm" class="form-grid">
+          <input name="nome" placeholder="Nome" required />
+          <input name="email" type="email" placeholder="E-mail" required />
+          <input name="senha" type="password" placeholder="Senha forte" minlength="8" required />
+          <button class="primary-button" type="submit">Criar usuario</button>
+        </form>
+
         <form id="usuarioEditForm" class="form-grid hidden">
           <input type="hidden" name="id" />
           <input name="nome" placeholder="Nome" required />

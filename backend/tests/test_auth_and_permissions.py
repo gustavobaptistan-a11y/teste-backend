@@ -10,8 +10,12 @@ def test_primeiro_usuario_vira_administrador(client):
 
 def test_segundo_usuario_vira_usuario_comum(client):
     create_user(client, "admin@teste.com")
-    response = create_user(client, "user@teste.com")
+    admin_headers = login_headers(client, "admin@teste.com")
 
+    public_response = create_user(client, "publico@teste.com")
+    response = create_user(client, "user@teste.com", headers=admin_headers)
+
+    assert public_response.status_code == 403
     assert response.status_code == 201
     assert response.json()["permissao"] == "Usuario Comum"
 
@@ -30,9 +34,8 @@ def test_dashboard_exige_token(client):
 
 def test_admin_lista_usuarios_e_usuario_comum_recebe_403(client):
     create_user(client, "admin@teste.com")
-    create_user(client, "user@teste.com")
-
     admin_headers = login_headers(client, "admin@teste.com")
+    create_user(client, "user@teste.com", headers=admin_headers)
     user_headers = login_headers(client, "user@teste.com")
 
     assert client.get("/usuarios/", headers=admin_headers).status_code == 200
@@ -41,8 +44,8 @@ def test_admin_lista_usuarios_e_usuario_comum_recebe_403(client):
 
 def test_usuario_inativo_nao_consegue_logar(client):
     admin = create_user(client, "admin@teste.com").json()
-    user = create_user(client, "user@teste.com").json()
     admin_headers = login_headers(client, admin["email"])
+    user = create_user(client, "user@teste.com", headers=admin_headers).json()
 
     response = client.patch(
         f"/usuarios/{user['id']}/status",
@@ -59,8 +62,8 @@ def test_usuario_inativo_nao_consegue_logar(client):
 
 def test_admin_altera_permissao_e_edita_usuario(client):
     create_user(client, "admin@teste.com")
-    user = create_user(client, "user@teste.com").json()
     admin_headers = login_headers(client, "admin@teste.com")
+    user = create_user(client, "user@teste.com", headers=admin_headers).json()
 
     permission = client.patch(
         f"/usuarios/{user['id']}/permissao",

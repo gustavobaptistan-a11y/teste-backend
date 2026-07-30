@@ -16,6 +16,9 @@ Mapeamento dos requisitos do teste tecnico Lifeline One para a implementacao atu
 - [x] Segredos removidos do codigo e do Docker Compose.
 - [x] Token no frontend armazenado apenas em `sessionStorage`.
 - [x] Headers HTTP basicos de seguranca na API.
+- [x] Cadastro publico permitido somente para bootstrap do primeiro administrador.
+- [x] Criacao posterior de usuarios restrita a administradores.
+- [x] Configuracao de API removida da tela de login.
 
 ## Modulo 2 - Gestao de Clientes
 
