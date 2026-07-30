@@ -380,7 +380,14 @@ tr:last-child td {
 .lead-list {
   display: grid;
   gap: 10px;
+  min-height: 280px;
   padding: 12px;
+}
+
+.lead-list.drag-over {
+  outline: 2px solid var(--teal);
+  outline-offset: -6px;
+  background: var(--mint);
 }
 
 .lead-card {
@@ -390,6 +397,15 @@ tr:last-child td {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--panel);
+  cursor: grab;
+}
+
+.lead-card.dragging {
+  opacity: 0.55;
+}
+
+.lead-card:active {
+  cursor: grabbing;
 }
 
 .lead-card strong {

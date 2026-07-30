@@ -49,3 +49,31 @@ def test_usuario_inativo_nao_consegue_logar(client):
         "/auth/token",
         data={"username": user["email"], "password": "senha123"},
     ).status_code == 403
+
+
+def test_admin_altera_permissao_e_edita_usuario(client):
+    create_user(client, "admin@teste.com")
+    user = create_user(client, "user@teste.com").json()
+    admin_headers = login_headers(client, "admin@teste.com")
+
+    permission = client.patch(
+        f"/usuarios/{user['id']}/permissao",
+        headers=admin_headers,
+        json={"permissao": "Administrador"},
+    )
+    assert permission.status_code == 200
+    assert permission.json()["permissao"] == "Administrador"
+
+    updated = client.put(
+        f"/usuarios/{user['id']}",
+        headers=admin_headers,
+        json={
+            "nome": "Usuario Editado",
+            "email": "editado@teste.com",
+            "permissao": "Usuario Comum",
+            "ativo": True,
+        },
+    )
+    assert updated.status_code == 200
+    assert updated.json()["nome"] == "Usuario Editado"
+    assert updated.json()["email"] == "editado@teste.com"

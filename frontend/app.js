@@ -197,7 +197,7 @@ function leadCard(lead) {
   const prevStage = etapas[Math.max(currentIndex - 1, 0)];
 
   return `
-    <article class="lead-card">
+    <article class="lead-card" draggable="true" data-lead-card="${lead.id}">
       <strong>${lead.titulo}</strong>
       <span class="lead-meta">${lead.cliente_nome} - ${money(lead.valor)}</span>
       ${lead.descricao ? `<span class="lead-meta">${lead.descricao}</span>` : ""}
@@ -220,7 +220,9 @@ function renderKanban() {
             <h3>${etapa}</h3>
             <strong>${leads.length}</strong>
           </header>
-          <div class="lead-list">${leads.map(leadCard).join("") || '<span class="lead-meta">Sem cards</span>'}</div>
+          <div class="lead-list" data-drop-stage="${etapa}">
+            ${leads.map(leadCard).join("") || '<span class="lead-meta">Sem cards</span>'}
+          </div>
         </section>
       `;
     })
@@ -510,6 +512,70 @@ document.addEventListener("change", async (event) => {
     await request(`/usuarios/${userId}/permissao`, {
       method: "PATCH",
       body: JSON.stringify({ permissao: event.target.value }),
+    });
+    await loadAll();
+  } catch (error) {
+    setStatus(error.message);
+  }
+});
+
+document.addEventListener("dragstart", (event) => {
+  const card = event.target.closest("[data-lead-card]");
+  if (!card) {
+    return;
+  }
+
+  event.dataTransfer.setData("text/plain", card.dataset.leadCard);
+  event.dataTransfer.effectAllowed = "move";
+  card.classList.add("dragging");
+});
+
+document.addEventListener("dragend", (event) => {
+  const card = event.target.closest("[data-lead-card]");
+  if (card) {
+    card.classList.remove("dragging");
+  }
+  document.querySelectorAll("[data-drop-stage]").forEach((list) => list.classList.remove("drag-over"));
+});
+
+document.addEventListener("dragover", (event) => {
+  const list = event.target.closest("[data-drop-stage]");
+  if (!list) {
+    return;
+  }
+
+  event.preventDefault();
+  event.dataTransfer.dropEffect = "move";
+  list.classList.add("drag-over");
+});
+
+document.addEventListener("dragleave", (event) => {
+  const list = event.target.closest("[data-drop-stage]");
+  if (list && !list.contains(event.relatedTarget)) {
+    list.classList.remove("drag-over");
+  }
+});
+
+document.addEventListener("drop", async (event) => {
+  const list = event.target.closest("[data-drop-stage]");
+  if (!list) {
+    return;
+  }
+
+  event.preventDefault();
+  list.classList.remove("drag-over");
+  const leadId = event.dataTransfer.getData("text/plain");
+  const etapa = list.dataset.dropStage;
+  const lead = state.leads.find((item) => String(item.id) === leadId);
+
+  if (!lead || lead.etapa === etapa) {
+    return;
+  }
+
+  try {
+    await request(`/kanban/${leadId}/etapa`, {
+      method: "PATCH",
+      body: JSON.stringify({ etapa }),
     });
     await loadAll();
   } catch (error) {

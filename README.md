@@ -7,8 +7,11 @@ operacional para CRM comercial.
 
 ```text
 backend/   API REST com FastAPI, JWT, SQLAlchemy e PostgreSQL
+docs/      Checklist do briefing e roteiro de code review
 frontend/  Interface web estatica com login, dashboard, clientes, kanban e usuarios
 ```
+
+Checklist minucioso do briefing: `docs/BRIEFING_CHECKLIST.md`.
 
 ## Requisitos atendidos
 
