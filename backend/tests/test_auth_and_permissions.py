@@ -86,3 +86,24 @@ def test_admin_altera_permissao_e_edita_usuario(client):
     assert updated.status_code == 200
     assert updated.json()["nome"] == "Usuario Editado"
     assert updated.json()["email"] == "editado@teste.com"
+
+
+def test_logout_revoga_token(client, monkeypatch):
+    revoked_keys = set()
+
+    def fake_set_cache_key(key, value, ttl_seconds):
+        revoked_keys.add(key)
+        return True
+
+    def fake_cache_key_exists(key):
+        return key in revoked_keys
+
+    monkeypatch.setattr("app.api.auth.set_cache_key", fake_set_cache_key)
+    monkeypatch.setattr("app.core.auth.cache_key_exists", fake_cache_key_exists)
+
+    create_user(client, "admin@teste.com")
+    headers = login_headers(client, "admin@teste.com")
+
+    assert client.get("/auth/me", headers=headers).status_code == 200
+    assert client.post("/auth/logout", headers=headers).status_code == 200
+    assert client.get("/auth/me", headers=headers).status_code == 401

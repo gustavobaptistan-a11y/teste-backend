@@ -1,3 +1,4 @@
+import uuid
 from datetime import UTC, datetime, timedelta
 
 from jose import jwt
@@ -32,4 +33,5 @@ def criar_token_acesso(data: dict, expires_delta: timedelta | None = None) -> st
         expire = datetime.now(UTC) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
 
     dados_para_codificar.update({"exp": expire})
+    dados_para_codificar.setdefault("jti", uuid.uuid4().hex)
     return jwt.encode(dados_para_codificar, SECRET_KEY, algorithm=ALGORITHM)

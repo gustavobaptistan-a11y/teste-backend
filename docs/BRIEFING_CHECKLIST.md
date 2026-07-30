@@ -37,6 +37,8 @@ Mapeamento dos requisitos do teste tecnico Lifeline One para a implementacao atu
 - [x] Quadro visual em colunas.
 - [x] Criacao de oportunidades.
 - [x] Movimentacao entre etapas comerciais.
+- [x] Detalhamento de oportunidade.
+- [x] Edicao completa de oportunidade.
 - [x] Exclusao de oportunidades.
 - [x] Persistencia em PostgreSQL.
 - [x] Movimentacao por drag-and-drop no frontend.
@@ -70,6 +72,9 @@ Mapeamento dos requisitos do teste tecnico Lifeline One para a implementacao atu
 - [x] PostgreSQL.
 - [x] Redis.
 - [x] Frontend limpo e responsivo.
+- [x] Migracoes versionadas com Alembic.
+- [x] Paginacao em listagens sensiveis.
+- [x] Logout com revogacao de token via Redis.
 
 ## Entregaveis
 

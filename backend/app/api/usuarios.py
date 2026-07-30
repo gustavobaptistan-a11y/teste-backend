@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -73,11 +73,13 @@ def obter_status_setup(db: Session = Depends(get_db)):
 
 @router.get("/", response_model=List[UsuarioResponse])
 def listar_usuarios(
+    skip: int = Query(0, ge=0, description="Quantidade de registros ignorados"),
+    limit: int = Query(50, ge=1, le=100, description="Limite de registros retornados"),
     db: Session = Depends(get_db),
     _: UsuarioModel = Depends(get_current_admin_user),
 ):
     """Lista usuarios cadastrados. Acesso administrativo."""
-    return db.query(UsuarioModel).order_by(UsuarioModel.nome.asc()).all()
+    return db.query(UsuarioModel).order_by(UsuarioModel.nome.asc()).offset(skip).limit(limit).all()
 
 
 @router.put("/{usuario_id}", response_model=UsuarioResponse)

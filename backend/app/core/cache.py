@@ -88,3 +88,26 @@ def delete_cache(*keys: str) -> None:
         client.delete(*keys)
     except RedisError:
         return
+
+
+def set_cache_key(key: str, value: str, ttl_seconds: int) -> bool:
+    client = get_redis_client()
+    if client is None:
+        return False
+
+    try:
+        client.setex(key, ttl_seconds, value)
+    except RedisError:
+        return False
+    return True
+
+
+def cache_key_exists(key: str) -> bool:
+    client = get_redis_client()
+    if client is None:
+        return False
+
+    try:
+        return bool(client.exists(key))
+    except RedisError:
+        return False

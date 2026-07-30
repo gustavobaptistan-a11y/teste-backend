@@ -15,6 +15,10 @@ class LeadCreate(LeadBase):
     pass
 
 
+class LeadUpdate(LeadBase):
+    pass
+
+
 class LeadUpdateEtapa(BaseModel):
     etapa: str
 

@@ -19,7 +19,9 @@ tecnica.
 - Bcrypt para armazenamento seguro de senha.
 - PostgreSQL para dados relacionais.
 - Redis para cache de metricas do dashboard com TTL de 60 segundos.
+- Redis tambem e usado para revogacao de token no logout.
 - Fallback para PostgreSQL quando Redis nao esta disponivel.
+- Alembic foi configurado para migracoes versionadas de banco.
 - Primeiro usuario cadastrado vira administrador para viabilizar o setup inicial.
 - Rotas comerciais exigem usuario autenticado e ativo.
 - Rotas de gestao de usuarios exigem permissao de administrador.
@@ -60,7 +62,7 @@ cd backend
 Resultado atual:
 
 ```text
-11 passed
+12 passed
 ```
 
 ## Execucao Local

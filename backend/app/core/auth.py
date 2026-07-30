@@ -3,12 +3,17 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 
+from app.core.cache import cache_key_exists
 from app.core.database import get_db
 from app.core.security import ALGORITHM, SECRET_KEY
 from app.models import UsuarioModel
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 optional_oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token", auto_error=False)
+
+
+def token_blacklist_key(jti: str) -> str:
+    return f"auth:blacklist:{jti}"
 
 
 def get_current_user(
@@ -24,7 +29,10 @@ def get_current_user(
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email = payload.get("sub")
-        if email is None:
+        jti = payload.get("jti")
+        if email is None or jti is None:
+            raise credentials_exception
+        if cache_key_exists(token_blacklist_key(jti)):
             raise credentials_exception
     except JWTError:
         raise credentials_exception
@@ -46,7 +54,10 @@ def get_optional_current_user(
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email = payload.get("sub")
-        if email is None:
+        jti = payload.get("jti")
+        if email is None or jti is None:
+            return None
+        if cache_key_exists(token_blacklist_key(jti)):
             return None
     except JWTError:
         return None

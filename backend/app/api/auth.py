@@ -1,10 +1,14 @@
+from datetime import UTC, datetime
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
+from jose import jwt
 from sqlalchemy.orm import Session
 
-from app.core.auth import get_current_active_user
+from app.core.auth import get_current_active_user, oauth2_scheme, token_blacklist_key
+from app.core.cache import set_cache_key
 from app.core.database import get_db
-from app.core.security import criar_token_acesso, verificar_senha
+from app.core.security import ALGORITHM, SECRET_KEY, criar_token_acesso, verificar_senha
 from app.models import UsuarioModel
 from app.schemas.usuario import UsuarioResponse
 
@@ -43,3 +47,29 @@ def login_para_token_acesso(
 def obter_perfil(usuario: UsuarioModel = Depends(get_current_active_user)):
     """Retorna os dados do usuario autenticado."""
     return usuario
+
+
+@router.post("/logout")
+def logout(
+    token: str = Depends(oauth2_scheme),
+    _: UsuarioModel = Depends(get_current_active_user),
+):
+    """Revoga o token atual ate sua expiracao natural."""
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    jti = payload.get("jti")
+    exp = payload.get("exp")
+    if not jti or not exp:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Token sem identificador de sessao.",
+        )
+
+    ttl_seconds = max(int(exp - datetime.now(UTC).timestamp()), 1)
+    revoked = set_cache_key(token_blacklist_key(jti), "revoked", ttl_seconds)
+    if not revoked:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Redis indisponivel para revogacao de token.",
+        )
+
+    return {"mensagem": "Sessao encerrada com sucesso."}

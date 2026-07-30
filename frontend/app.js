@@ -85,11 +85,23 @@ async function request(path, options = {}) {
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
     if (response.status === 401) {
-      logout(false);
+      clearSession(false);
     }
     throw new Error(data.detail || "Nao foi possivel concluir a operacao.");
   }
   return data;
+}
+
+function clearSession(showMessage = true) {
+  state.token = null;
+  state.usuario = null;
+  state.usuarios = [];
+  sessionStorage.removeItem("lifeline_token");
+  switchView("dashboard");
+  updateAuthUi();
+  if (showMessage) {
+    setStatus("Sessao encerrada.", true);
+  }
 }
 
 function formData(form) {
@@ -379,16 +391,12 @@ async function login(email, senha) {
   await loadAll();
 }
 
-function logout(showMessage = true) {
-  state.token = null;
-  state.usuario = null;
-  state.usuarios = [];
-  sessionStorage.removeItem("lifeline_token");
-  switchView("dashboard");
-  updateAuthUi();
-  if (showMessage) {
-    setStatus("Sessao encerrada.", true);
+async function logout(showMessage = true, revokeRemote = true) {
+  if (revokeRemote && state.token) {
+    await request("/auth/logout", { method: "POST" }).catch(() => null);
   }
+
+  clearSession(showMessage);
 }
 
 els.navButtons.forEach((button) => {

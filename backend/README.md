@@ -63,3 +63,12 @@ cd backend
 ```
 
 Os testes rodam com SQLite isolado e cobrem autenticacao, permissoes administrativas e CRUD de clientes.
+
+## Migracoes
+
+```bash
+cd backend
+..\.venv\Scripts\python.exe -m alembic upgrade head
+```
+
+O projeto tambem mantem criacao/migracao leve no startup para facilitar execucao local do teste.

@@ -41,6 +41,8 @@ def criar_cliente(
 def listar_clientes(
     nome: Optional[str] = Query(None, description="Filtrar cliente por parte do nome"),
     ativo: Optional[bool] = Query(None, description="Filtrar por status ativo/inativo"),
+    skip: int = Query(0, ge=0, description="Quantidade de registros ignorados"),
+    limit: int = Query(50, ge=1, le=100, description="Limite de registros retornados"),
     db: Session = Depends(get_db),
     _: UsuarioModel = Depends(get_current_active_user),
 ):
@@ -50,7 +52,7 @@ def listar_clientes(
         query = query.filter(ClienteModel.nome.ilike(f"%{nome}%"))
     if ativo is not None:
         query = query.filter(ClienteModel.ativo == ativo)
-    return query.order_by(ClienteModel.nome.asc()).all()
+    return query.order_by(ClienteModel.nome.asc()).offset(skip).limit(limit).all()
 
 
 @router.get("/{cliente_id}", response_model=ClienteResponse)

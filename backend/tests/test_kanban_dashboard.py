@@ -30,11 +30,31 @@ def test_cria_move_exclui_lead_e_atualiza_dashboard(client):
     assert lead.status_code == 201
     lead_id = lead.json()["id"]
 
+    detail = client.get(f"/kanban/{lead_id}", headers=headers)
+    assert detail.status_code == 200
+    assert detail.json()["titulo"] == "Plano Empresarial"
+
+    updated = client.put(
+        f"/kanban/{lead_id}",
+        headers=headers,
+        json={
+            "titulo": "Plano Empresarial Premium",
+            "cliente_nome": "Cliente Dashboard",
+            "valor": 4500,
+            "etapa": "Proposta Enviada",
+            "descricao": "Proposta revisada com escopo premium",
+        },
+    )
+    assert updated.status_code == 200
+    assert updated.json()["titulo"] == "Plano Empresarial Premium"
+    assert updated.json()["valor"] == 4500
+    assert updated.json()["etapa"] == "Proposta Enviada"
+
     dashboard = client.get("/dashboard/metricas", headers=headers)
     assert dashboard.status_code == 200
     assert dashboard.json()["clientes"]["total_ativos"] == 1
     assert dashboard.json()["pipeline"]["total_oportunidades"] == 1
-    assert dashboard.json()["pipeline"]["valor_total_estimado"] == 3000
+    assert dashboard.json()["pipeline"]["valor_total_estimado"] == 4500
 
     moved = client.patch(
         f"/kanban/{lead_id}/etapa",
