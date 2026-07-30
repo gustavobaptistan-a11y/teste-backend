@@ -163,7 +163,13 @@ function AuthView({ setupOpen, onLogin, onRegister, onError, status }) {
             </label>
             <div className="auth-options">
               <span>Sessao por aba</span>
-              <span>Senha protegida</span>
+              <button
+                className="auth-link"
+                type="button"
+                onClick={() => onError("Solicite a redefinicao de senha ao administrador ou a equipe de TI responsavel pelo painel.")}
+              >
+                Esqueci a senha
+              </button>
             </div>
             <button className="primary-button auth-submit" type="submit">
               Entrar no painel <span aria-hidden="true">-&gt;</span>

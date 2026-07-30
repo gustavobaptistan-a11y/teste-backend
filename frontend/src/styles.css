@@ -348,6 +348,24 @@ button:disabled {
   font-weight: 700;
 }
 
+.auth-link {
+  min-height: auto;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--teal);
+  box-shadow: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.auth-link:hover {
+  color: var(--teal-dark);
+  text-decoration: underline;
+}
+
 .auth-submit {
   min-height: 44px;
   border-radius: 999px;
