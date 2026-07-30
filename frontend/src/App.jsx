@@ -53,6 +53,31 @@ function statusClass(active) {
   return active ? "badge badge-green" : "badge badge-coral";
 }
 
+function userInitials(nome = "") {
+  return (
+    nome
+      .split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0])
+      .join("")
+      .toUpperCase() || "LO"
+  );
+}
+
+function NavGroup({ label, items, view, onView }) {
+  return (
+    <div className="nav-group">
+      <span className="nav-group-label">{label}</span>
+      {items.map(([id, itemLabel]) => (
+        <button key={id} className={`nav-button ${view === id ? "active" : ""}`} type="button" onClick={() => onView(id)}>
+          {itemLabel}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 function ConfirmModal({ confirmation, onResolve }) {
   if (!confirmation) {
     return null;
@@ -178,37 +203,46 @@ function AuthView({ setupOpen, onLogin, onRegister, onError, status }) {
 
 function Sidebar({ view, usuario, onView, onLogout }) {
   const isAdmin = usuario?.permissao === "Administrador";
-  const items = [
-    ["dashboard", "Dashboard"],
+  const commercialItems = [
+    ["dashboard", "Dashboard Comercial"],
     ["clientes", "Clientes"],
-    ["kanban", "Kanban"],
+    ["kanban", "Funil Comercial"],
+  ];
+  const systemItems = [
     ["perfil", "Meu perfil"],
   ];
 
   if (isAdmin) {
-    items.push(["usuarios", "Usuarios"]);
+    systemItems.push(["usuarios", "Usuarios e Acessos"]);
   }
 
   return (
     <aside className="sidebar">
-      <div>
-        <p className="eyebrow">Lifeline One</p>
-        <h1>Comercial</h1>
+      <div className="brand-block">
+        <div className="brand-mark" aria-hidden="true">
+          L1
+        </div>
+        <div>
+          <strong>Lifeline One</strong>
+          <span>Painel Comercial</span>
+        </div>
       </div>
       <nav aria-label="Navegacao principal">
-        {items.map(([id, label]) => (
-          <button key={id} className={`nav-button ${view === id ? "active" : ""}`} type="button" onClick={() => onView(id)}>
-            {label}
-          </button>
-        ))}
+        <NavGroup label="Operacao" items={commercialItems} view={view} onView={onView} />
+        <NavGroup label="Sistema" items={systemItems} view={view} onView={onView} />
       </nav>
       <div className="user-box">
-        <strong>{usuario.nome}</strong>
-        <span>{usuario.permissao}</span>
+        <div className="user-avatar" aria-hidden="true">
+          {userInitials(usuario.nome)}
+        </div>
+        <div className="user-summary">
+          <strong>{usuario.nome}</strong>
+          <span>{usuario.permissao}</span>
+        </div>
+        <button className="icon-button sidebar-logout" type="button" onClick={onLogout} title="Sair">
+          Sair
+        </button>
       </div>
-      <button className="nav-button" type="button" onClick={onLogout}>
-        Sair
-      </button>
     </aside>
   );
 }
@@ -1224,13 +1258,24 @@ function App() {
         </section>
         <section className="private-area">
           <header className="topbar">
-            <div>
-              <p className="eyebrow">Gestao integrada</p>
+            <div className="topbar-title">
+              <p className="breadcrumb">
+                <span>Painel Lifelineone</span>
+                <span>/</span>
+                <strong>{viewTitle}</strong>
+              </p>
               <h2>{viewTitle}</h2>
             </div>
-            <button className="primary-button" type="button" onClick={loadAll} disabled={loading}>
-              Atualizar
-            </button>
+            <label className="topbar-search">
+              <span aria-hidden="true">Buscar</span>
+              <input value="" readOnly placeholder="Buscar no CRM..." aria-label="Buscar no CRM" />
+              <kbd>Ctrl K</kbd>
+            </label>
+            <div className="topbar-actions">
+              <button className="icon-button refresh-button" type="button" onClick={loadAll} disabled={loading} title="Atualizar dados">
+                Atualizar
+              </button>
+            </div>
           </header>
 
           {view === "dashboard" && <DashboardView metricas={metricas} />}
@@ -1263,6 +1308,9 @@ function App() {
             />
           )}
         </section>
+        <footer className="app-footer">
+          Desenvolvido por <strong>LIFELINEONE</strong>
+        </footer>
       </main>
       <ConfirmModal confirmation={confirmation} onResolve={resolveConfirm} />
     </div>
