@@ -15,6 +15,7 @@ Checklist minucioso do briefing: `docs/BRIEFING_CHECKLIST.md`.
 Roteiro de code review: `docs/CODE_REVIEW.md`.
 Guia de deploy: `docs/DEPLOY.md`.
 Roteiro final de publicacao segura: `docs/DEPLOY_FINAL.md`.
+Deploy local para apresentacao no PC: `docs/DEPLOY_LOCAL.md`.
 
 ## Requisitos atendidos
 

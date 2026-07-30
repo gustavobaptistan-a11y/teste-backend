@@ -80,7 +80,7 @@ npm run build
 Resultado atual:
 
 ```text
-13 passed
+16 passed
 Frontend security checks passed.
 Vite build passed.
 ```
@@ -104,15 +104,20 @@ npm install
 npm run dev
 ```
 
-Infra:
+Deploy local no PC:
 
 ```powershell
-docker compose up -d --build
+.\scripts\setup-local-postgres.ps1
+cd backend
+..\.venv\Scripts\python.exe -m alembic upgrade head
+cd ..
+.\scripts\start-local-backend.ps1
+.\scripts\start-local-frontend.ps1
 ```
 
 ## Pendencias Possiveis
 
-- Publicar deploy final.
-- Conectar o repositorio remoto definitivo e fazer push.
-- Reaplicar os headers de `frontend/nginx.example.conf` no provedor escolhido.
+- Rodar a apresentacao local com backend e frontend abertos no PC.
+- Instalar Redis local se quiser demonstrar cache real sem fallback.
+- Reaplicar os headers de `frontend/nginx.example.conf` caso o projeto seja publicado fora do PC.
 - Adicionar observabilidade/log estruturado para ambiente produtivo.
