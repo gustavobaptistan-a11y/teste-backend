@@ -64,6 +64,8 @@ SECRET_KEY=
 CORS_ORIGINS=
 ```
 
+Para a entrega final em HTTPS, siga tambem `docs/DEPLOY_FINAL.md`.
+
 ## Checklist Antes de Publicar
 
 - [ ] Trocar `SECRET_KEY`.

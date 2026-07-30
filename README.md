@@ -14,6 +14,7 @@ frontend/  Interface React + Vite com login, dashboard, clientes, kanban e usuar
 Checklist minucioso do briefing: `docs/BRIEFING_CHECKLIST.md`.
 Roteiro de code review: `docs/CODE_REVIEW.md`.
 Guia de deploy: `docs/DEPLOY.md`.
+Roteiro final de publicacao segura: `docs/DEPLOY_FINAL.md`.
 
 ## Requisitos atendidos
 

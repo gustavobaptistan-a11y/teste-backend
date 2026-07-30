@@ -49,3 +49,23 @@ def test_cliente_sem_token_recebe_401(client):
     response = client.get("/clientes/")
 
     assert response.status_code == 401
+
+
+def test_cliente_rejeita_payload_excessivo(client):
+    create_user(client, "admin@teste.com")
+    headers = login_headers(client, "admin@teste.com")
+
+    response = client.post(
+        "/clientes/",
+        headers=headers,
+        json={
+            "nome": "A",
+            "email": "cliente@teste.com",
+            "telefone": "123",
+            "empresa": "x" * 300,
+            "origem": "Site",
+            "observacoes": "Observacao de teste",
+        },
+    )
+
+    assert response.status_code == 422

@@ -79,3 +79,22 @@ def test_kanban_exige_token(client):
     response = client.get("/kanban/")
 
     assert response.status_code == 401
+
+
+def test_kanban_rejeita_etapa_invalida(client):
+    create_user(client, "admin@teste.com")
+    headers = login_headers(client, "admin@teste.com")
+
+    response = client.post(
+        "/kanban/",
+        headers=headers,
+        json={
+            "titulo": "Lead Invalido",
+            "cliente_nome": "Cliente Teste",
+            "valor": 1000,
+            "etapa": "Etapa Fora do Briefing",
+            "descricao": "Nao deve entrar no funil comercial.",
+        },
+    )
+
+    assert response.status_code == 422

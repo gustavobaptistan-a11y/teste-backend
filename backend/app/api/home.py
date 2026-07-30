@@ -7,3 +7,8 @@ def home():
     return {
         "message": "Bem-vindo a Lifeline One"
     }
+
+
+@router.get("/health")
+def health():
+    return {"status": "ok"}

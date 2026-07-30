@@ -1,14 +1,16 @@
-from typing import Optional
+from typing import Literal, Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
+
+EtapaLead = Literal["Novo Lead", "Em Negociacao", "Proposta Enviada", "Fechado"]
 
 
 class LeadBase(BaseModel):
-    titulo: str
-    cliente_nome: str
-    valor: float
-    etapa: str = "Novo Lead"
-    descricao: Optional[str] = None
+    titulo: str = Field(min_length=2, max_length=255)
+    cliente_nome: str = Field(min_length=2, max_length=255)
+    valor: float = Field(ge=0)
+    etapa: EtapaLead = "Novo Lead"
+    descricao: Optional[str] = Field(default=None, max_length=1000)
 
 
 class LeadCreate(LeadBase):
@@ -20,7 +22,7 @@ class LeadUpdate(LeadBase):
 
 
 class LeadUpdateEtapa(BaseModel):
-    etapa: str
+    etapa: EtapaLead
 
 
 class LeadResponse(LeadBase):

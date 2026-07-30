@@ -1,6 +1,13 @@
 from tests.conftest import create_user, login_headers
 
 
+def test_healthcheck_publico(client):
+    response = client.get("/health")
+
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}
+
+
 def test_primeiro_usuario_vira_administrador(client):
     response = create_user(client, "admin@teste.com")
 
