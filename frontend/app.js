@@ -9,6 +9,7 @@ const state = {
   usuariosPage: { skip: 0, limit: 10 },
   loading: false,
   setupOpen: false,
+  confirmResolver: null,
   token: sessionStorage.getItem("lifeline_token"),
   usuario: null,
 };
@@ -27,8 +28,11 @@ const els = {
   setupPanel: document.querySelector("#setupPanel"),
   loginForm: document.querySelector("#loginForm"),
   registerForm: document.querySelector("#registerForm"),
+  passwordForm: document.querySelector("#passwordForm"),
+  profileSummary: document.querySelector("#profileSummary"),
   clienteFilterForm: document.querySelector("#clienteFilterForm"),
   clearClienteFilters: document.querySelector("#clearClienteFilters"),
+  toggleClienteForm: document.querySelector("#toggleClienteForm"),
   clienteForm: document.querySelector("#clienteForm"),
   clienteEditForm: document.querySelector("#clienteEditForm"),
   cancelClienteEdit: document.querySelector("#cancelClienteEdit"),
@@ -37,6 +41,7 @@ const els = {
   prevClientesPage: document.querySelector("#prevClientesPage"),
   nextClientesPage: document.querySelector("#nextClientesPage"),
   clientesPageInfo: document.querySelector("#clientesPageInfo"),
+  toggleLeadForm: document.querySelector("#toggleLeadForm"),
   leadForm: document.querySelector("#leadForm"),
   leadEditForm: document.querySelector("#leadEditForm"),
   cancelLeadEdit: document.querySelector("#cancelLeadEdit"),
@@ -49,11 +54,16 @@ const els = {
   prevUsuariosPage: document.querySelector("#prevUsuariosPage"),
   nextUsuariosPage: document.querySelector("#nextUsuariosPage"),
   usuariosPageInfo: document.querySelector("#usuariosPageInfo"),
+  toggleUsuarioCreateForm: document.querySelector("#toggleUsuarioCreateForm"),
   metricClientes: document.querySelector("#metricClientes"),
   metricLeads: document.querySelector("#metricLeads"),
   metricValor: document.querySelector("#metricValor"),
   metricConversao: document.querySelector("#metricConversao"),
   stageSummary: document.querySelector("#stageSummary"),
+  confirmModal: document.querySelector("#confirmModal"),
+  confirmMessage: document.querySelector("#confirmMessage"),
+  cancelConfirm: document.querySelector("#cancelConfirm"),
+  acceptConfirm: document.querySelector("#acceptConfirm"),
 };
 
 const API_BASE = window.LIFELINE_API_BASE;
@@ -70,6 +80,55 @@ function money(value) {
     style: "currency",
     currency: "BRL",
   }).format(Number(value || 0));
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function strongPassword(value) {
+  return value.length >= 8 && /[a-z]/.test(value) && /[A-Z]/.test(value) && /\d/.test(value);
+}
+
+function bindPasswordHint(input, hint) {
+  if (!input || !hint) {
+    return;
+  }
+
+  const update = () => {
+    if (!input.value) {
+      hint.textContent = "Minimo 8 caracteres, com maiuscula, minuscula e numero.";
+      hint.className = "password-hint";
+      return;
+    }
+
+    const valid = strongPassword(input.value);
+    hint.textContent = valid ? "Senha atende aos criterios." : "Use maiuscula, minuscula, numero e pelo menos 8 caracteres.";
+    hint.className = `password-hint ${valid ? "ok" : "error"}`;
+  };
+
+  input.addEventListener("input", update);
+  update();
+}
+
+function validateStrongPassword(password) {
+  if (!strongPassword(password)) {
+    throw new Error("A senha deve ter no minimo 8 caracteres, com maiuscula, minuscula e numero.");
+  }
+}
+
+function setCreateFormOpen(form, button, open, openLabel, closeLabel) {
+  form.classList.toggle("hidden", !open);
+  button.textContent = open ? closeLabel : openLabel;
+}
+
+function toggleCreateForm(form, button, openLabel, closeLabel) {
+  setCreateFormOpen(form, button, form.classList.contains("hidden"), openLabel, closeLabel);
 }
 
 function setStatus(message, ok = false) {
@@ -96,7 +155,24 @@ function updatePagers() {
 }
 
 function confirmAction(message) {
-  return window.confirm(message);
+  els.confirmMessage.textContent = message;
+  els.confirmModal.classList.remove("hidden");
+  els.acceptConfirm.focus();
+
+  return new Promise((resolve) => {
+    state.confirmResolver = resolve;
+  });
+}
+
+function resolveConfirm(accepted) {
+  if (!state.confirmResolver) {
+    return;
+  }
+
+  const resolver = state.confirmResolver;
+  state.confirmResolver = null;
+  els.confirmModal.classList.add("hidden");
+  resolver(accepted);
 }
 
 async function request(path, options = {}) {
@@ -188,7 +264,7 @@ function updateAuthUi() {
   els.adminOnly.forEach((el) => el.classList.toggle("hidden", !isAdmin()));
   els.logoutButton.style.display = authenticated ? "block" : "none";
   els.userBox.innerHTML = authenticated
-    ? `<strong>${state.usuario.nome}</strong><span>${state.usuario.permissao}</span>`
+    ? `<strong>${escapeHtml(state.usuario.nome)}</strong><span>${escapeHtml(state.usuario.permissao)}</span>`
     : "";
 }
 
@@ -223,11 +299,11 @@ function renderClientes() {
     .map(
       (cliente) => `
         <tr>
-          <td>${cliente.nome}</td>
-          <td>${cliente.email}</td>
-          <td>${cliente.telefone}</td>
-          <td>${cliente.empresa || "-"}</td>
-          <td>${cliente.origem || "-"}</td>
+          <td>${escapeHtml(cliente.nome)}</td>
+          <td>${escapeHtml(cliente.email)}</td>
+          <td>${escapeHtml(cliente.telefone)}</td>
+          <td>${escapeHtml(cliente.empresa || "-")}</td>
+          <td>${escapeHtml(cliente.origem || "-")}</td>
           <td>${cliente.ativo ? "Ativo" : "Inativo"}</td>
           <td>
             <div class="row-actions">
@@ -244,15 +320,28 @@ function renderClientes() {
 
 function renderClienteDetail(cliente) {
   els.clienteDetail.innerHTML = `
-    <div class="detail-item"><span>Nome</span><strong>${cliente.nome}</strong></div>
-    <div class="detail-item"><span>E-mail</span><strong>${cliente.email}</strong></div>
-    <div class="detail-item"><span>Telefone</span><strong>${cliente.telefone}</strong></div>
-    <div class="detail-item"><span>Empresa</span><strong>${cliente.empresa || "-"}</strong></div>
-    <div class="detail-item"><span>Origem</span><strong>${cliente.origem || "-"}</strong></div>
+    <div class="detail-item"><span>Nome</span><strong>${escapeHtml(cliente.nome)}</strong></div>
+    <div class="detail-item"><span>E-mail</span><strong>${escapeHtml(cliente.email)}</strong></div>
+    <div class="detail-item"><span>Telefone</span><strong>${escapeHtml(cliente.telefone)}</strong></div>
+    <div class="detail-item"><span>Empresa</span><strong>${escapeHtml(cliente.empresa || "-")}</strong></div>
+    <div class="detail-item"><span>Origem</span><strong>${escapeHtml(cliente.origem || "-")}</strong></div>
     <div class="detail-item"><span>Status</span><strong>${cliente.ativo ? "Ativo" : "Inativo"}</strong></div>
-    <div class="detail-item"><span>Observacoes</span><strong>${cliente.observacoes || "-"}</strong></div>
+    <div class="detail-item"><span>Observacoes</span><strong>${escapeHtml(cliente.observacoes || "-")}</strong></div>
   `;
   els.clienteDetail.classList.remove("hidden");
+}
+
+function renderProfile() {
+  if (!state.usuario || !els.profileSummary) {
+    return;
+  }
+
+  els.profileSummary.innerHTML = `
+    <div class="detail-item"><span>Nome</span><strong>${escapeHtml(state.usuario.nome)}</strong></div>
+    <div class="detail-item"><span>E-mail</span><strong>${escapeHtml(state.usuario.email)}</strong></div>
+    <div class="detail-item"><span>Permissao</span><strong>${escapeHtml(state.usuario.permissao)}</strong></div>
+    <div class="detail-item"><span>Status</span><strong>${state.usuario.ativo ? "Ativo" : "Inativo"}</strong></div>
+  `;
 }
 
 function fillClienteEditForm(cliente) {
@@ -289,11 +378,11 @@ function resetUsuarioEdit() {
 
 function renderLeadDetail(lead) {
   els.leadDetail.innerHTML = `
-    <div class="detail-item"><span>Titulo</span><strong>${lead.titulo}</strong></div>
-    <div class="detail-item"><span>Cliente</span><strong>${lead.cliente_nome}</strong></div>
+    <div class="detail-item"><span>Titulo</span><strong>${escapeHtml(lead.titulo)}</strong></div>
+    <div class="detail-item"><span>Cliente</span><strong>${escapeHtml(lead.cliente_nome)}</strong></div>
     <div class="detail-item"><span>Valor</span><strong>${money(lead.valor)}</strong></div>
-    <div class="detail-item"><span>Etapa</span><strong>${lead.etapa}</strong></div>
-    <div class="detail-item"><span>Descricao</span><strong>${lead.descricao || "-"}</strong></div>
+    <div class="detail-item"><span>Etapa</span><strong>${escapeHtml(lead.etapa)}</strong></div>
+    <div class="detail-item"><span>Descricao</span><strong>${escapeHtml(lead.descricao || "-")}</strong></div>
   `;
   els.leadDetail.classList.remove("hidden");
 }
@@ -321,9 +410,9 @@ function leadCard(lead) {
 
   return `
     <article class="lead-card" draggable="true" data-lead-card="${lead.id}">
-      <strong>${lead.titulo}</strong>
-      <span class="lead-meta">${lead.cliente_nome} - ${money(lead.valor)}</span>
-      ${lead.descricao ? `<span class="lead-meta">${lead.descricao}</span>` : ""}
+      <strong>${escapeHtml(lead.titulo)}</strong>
+      <span class="lead-meta">${escapeHtml(lead.cliente_nome)} - ${money(lead.valor)}</span>
+      ${lead.descricao ? `<span class="lead-meta">${escapeHtml(lead.descricao)}</span>` : ""}
       <div class="lead-actions">
         <button class="ghost-button" data-detail-lead="${lead.id}">Detalhes</button>
         <button class="ghost-button" data-edit-lead="${lead.id}">Editar</button>
@@ -388,8 +477,8 @@ function renderUsuarios() {
     .map(
       (usuario) => `
         <tr>
-          <td>${usuario.nome}</td>
-          <td>${usuario.email}</td>
+          <td>${escapeHtml(usuario.nome)}</td>
+          <td>${escapeHtml(usuario.email)}</td>
           <td>
             <select data-user-permission="${usuario.id}">
               <option ${usuario.permissao === "Administrador" ? "selected" : ""}>Administrador</option>
@@ -441,6 +530,7 @@ async function loadAll() {
     els.leadDetail.classList.add("hidden");
     renderDashboard(metricas);
     renderUsuarios();
+    renderProfile();
     resetUsuarioEdit();
     setStatus("Dados atualizados.", true);
   } finally {
@@ -505,12 +595,41 @@ els.navButtons.forEach((button) => {
   button.addEventListener("click", () => switchView(button.dataset.view));
 });
 
+bindPasswordHint(els.registerForm.elements.senha, document.querySelector('[data-password-hint="register"]'));
+bindPasswordHint(els.usuarioCreateForm.elements.senha, document.querySelector('[data-password-hint="user"]'));
+bindPasswordHint(els.passwordForm.elements.nova_senha, document.querySelector('[data-password-hint="profile"]'));
+
+els.cancelConfirm.addEventListener("click", () => resolveConfirm(false));
+els.acceptConfirm.addEventListener("click", () => resolveConfirm(true));
+els.confirmModal.addEventListener("click", (event) => {
+  if (event.target === els.confirmModal) {
+    resolveConfirm(false);
+  }
+});
+
+els.toggleClienteForm.addEventListener("click", () => {
+  resetClienteEdit();
+  els.clienteDetail.classList.add("hidden");
+  toggleCreateForm(els.clienteForm, els.toggleClienteForm, "Novo cliente", "Fechar cadastro");
+});
+
+els.toggleLeadForm.addEventListener("click", () => {
+  resetLeadEdit();
+  els.leadDetail.classList.add("hidden");
+  toggleCreateForm(els.leadForm, els.toggleLeadForm, "Nova oportunidade", "Fechar cadastro");
+});
+
+els.toggleUsuarioCreateForm.addEventListener("click", () => {
+  resetUsuarioEdit();
+  toggleCreateForm(els.usuarioCreateForm, els.toggleUsuarioCreateForm, "Novo usuario", "Fechar cadastro");
+});
+
 els.refreshButton.addEventListener("click", () => {
   loadAll().catch((error) => setStatus(error.message));
 });
 
-els.logoutButton.addEventListener("click", () => {
-  if (confirmAction("Deseja encerrar sua sessao?")) {
+els.logoutButton.addEventListener("click", async () => {
+  if (await confirmAction("Deseja encerrar sua sessao?")) {
     logout();
   }
 });
@@ -529,6 +648,7 @@ els.registerForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const payload = formData(els.registerForm);
   try {
+    validateStrongPassword(payload.senha);
     await request("/usuarios/", {
       method: "POST",
       body: JSON.stringify(payload),
@@ -544,13 +664,37 @@ els.usuarioCreateForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const payload = formData(els.usuarioCreateForm);
   try {
+    validateStrongPassword(payload.senha);
     await request("/usuarios/", {
       method: "POST",
       body: JSON.stringify(payload),
     });
     els.usuarioCreateForm.reset();
+    setCreateFormOpen(els.usuarioCreateForm, els.toggleUsuarioCreateForm, false, "Novo usuario", "Fechar cadastro");
     await loadAll();
     setStatus("Usuario criado.", true);
+  } catch (error) {
+    setStatus(error.message);
+  }
+});
+
+els.passwordForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const payload = formData(els.passwordForm);
+
+  try {
+    validateStrongPassword(payload.nova_senha);
+    if (payload.nova_senha !== payload.confirmar_nova_senha) {
+      throw new Error("A confirmacao deve ser igual a nova senha.");
+    }
+
+    await request("/auth/trocar-senha", {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
+    els.passwordForm.reset();
+    clearSession(false);
+    setStatus("Senha alterada com sucesso. Faca login novamente.", true);
   } catch (error) {
     setStatus(error.message);
   }
@@ -592,6 +736,7 @@ els.clienteForm.addEventListener("submit", async (event) => {
       body: JSON.stringify(formData(els.clienteForm)),
     });
     els.clienteForm.reset();
+    setCreateFormOpen(els.clienteForm, els.toggleClienteForm, false, "Novo cliente", "Fechar cadastro");
     await loadAll();
   } catch (error) {
     setStatus(error.message);
@@ -664,6 +809,7 @@ els.leadForm.addEventListener("submit", async (event) => {
       body: JSON.stringify(payload),
     });
     els.leadForm.reset();
+    setCreateFormOpen(els.leadForm, els.toggleLeadForm, false, "Nova oportunidade", "Fechar cadastro");
     await loadAll();
   } catch (error) {
     setStatus(error.message);
@@ -717,7 +863,7 @@ document.addEventListener("click", async (event) => {
     }
 
     if (clienteId) {
-      if (!confirmAction("Excluir este cliente? Esta acao nao pode ser desfeita.")) {
+      if (!(await confirmAction("Excluir este cliente? Esta acao nao pode ser desfeita."))) {
         return;
       }
       await request(`/clientes/${clienteId}`, { method: "DELETE" });
@@ -736,7 +882,7 @@ document.addEventListener("click", async (event) => {
     }
 
     if (leadId) {
-      if (!confirmAction("Excluir esta oportunidade? Esta acao nao pode ser desfeita.")) {
+      if (!(await confirmAction("Excluir esta oportunidade? Esta acao nao pode ser desfeita."))) {
         return;
       }
       await request(`/kanban/${leadId}`, { method: "DELETE" });
@@ -760,7 +906,7 @@ document.addEventListener("click", async (event) => {
 
     if (toggleUserId) {
       const action = event.target.dataset.active === "true" ? "ativar" : "desativar";
-      if (!confirmAction(`Deseja ${action} este usuario?`)) {
+      if (!(await confirmAction(`Deseja ${action} este usuario?`))) {
         return;
       }
       await request(`/usuarios/${toggleUserId}/status`, {
@@ -781,7 +927,7 @@ document.addEventListener("change", async (event) => {
   }
 
   try {
-    if (!confirmAction("Alterar a permissao deste usuario?")) {
+    if (!(await confirmAction("Alterar a permissao deste usuario?"))) {
       await loadAll();
       return;
     }

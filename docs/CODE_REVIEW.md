@@ -34,9 +34,13 @@ tecnica.
 - `docker-compose.yml` exige variaveis via `.env`, sem senha de banco hardcoded.
 - Token do frontend fica em `sessionStorage`, reduzindo persistencia apos fechar a aba.
 - Cadastro exige senha com no minimo 8 caracteres, maiuscula, minuscula e numero.
+- Usuarios autenticados podem trocar a propria senha somente informando a senha atual.
+- Apos troca de senha, o frontend limpa a sessao e exige novo login.
 - O formulario de primeiro acesso aparece apenas quando ainda nao existe usuario.
 - Depois do bootstrap inicial, somente administradores podem criar usuarios.
 - Configuracao da URL da API nao e exibida na tela de login.
+- Campos dinamicos renderizados no frontend passam por escape para reduzir risco de XSS.
+- Acoes destrutivas e mudancas sensiveis usam confirmacao em modal controlado.
 - Contas inativas nao conseguem autenticar.
 - Usuarios comuns recebem `403` ao acessar endpoints administrativos.
 - Senhas nunca sao retornadas pela API.
@@ -49,8 +53,9 @@ tecnica.
 3. Criar, detalhar, editar, filtrar e excluir cliente.
 4. Criar lead no Kanban e arrastar entre colunas.
 5. Abrir tela de usuarios como admin, alterar permissao e ativar/desativar conta.
-6. Tentar acessar rotas privadas sem token e confirmar `401`.
-7. Tentar acessar gestao de usuarios com usuario comum e confirmar `403`.
+6. Abrir "Meu perfil", trocar a senha e confirmar novo login obrigatorio.
+7. Tentar acessar rotas privadas sem token e confirmar `401`.
+8. Tentar acessar gestao de usuarios com usuario comum e confirmar `403`.
 
 ## Validacao
 
@@ -62,7 +67,7 @@ cd backend
 Resultado atual:
 
 ```text
-12 passed
+13 passed
 ```
 
 ## Execucao Local

@@ -8,9 +8,9 @@ from sqlalchemy.orm import Session
 from app.core.auth import get_current_active_user, oauth2_scheme, token_blacklist_key
 from app.core.cache import set_cache_key
 from app.core.database import get_db
-from app.core.security import ALGORITHM, SECRET_KEY, criar_token_acesso, verificar_senha
+from app.core.security import ALGORITHM, SECRET_KEY, criar_token_acesso, gerar_hash_senha, verificar_senha
 from app.models import UsuarioModel
-from app.schemas.usuario import UsuarioResponse
+from app.schemas.usuario import UsuarioResponse, UsuarioTrocaSenha
 
 router = APIRouter(prefix="/auth", tags=["Autenticacao"])
 
@@ -47,6 +47,39 @@ def login_para_token_acesso(
 def obter_perfil(usuario: UsuarioModel = Depends(get_current_active_user)):
     """Retorna os dados do usuario autenticado."""
     return usuario
+
+
+@router.put("/trocar-senha")
+def trocar_senha(
+    payload: UsuarioTrocaSenha,
+    token: str = Depends(oauth2_scheme),
+    usuario: UsuarioModel = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+):
+    """Troca a senha do usuario autenticado apos validar a senha atual."""
+    if not verificar_senha(payload.senha_atual, usuario.senha_hash):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Senha atual incorreta.",
+        )
+
+    if verificar_senha(payload.nova_senha, usuario.senha_hash):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="A nova senha deve ser diferente da senha atual.",
+        )
+
+    usuario.senha_hash = gerar_hash_senha(payload.nova_senha)
+    db.commit()
+
+    payload_token = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    jti = payload_token.get("jti")
+    exp = payload_token.get("exp")
+    if jti and exp:
+        ttl_seconds = max(int(exp - datetime.now(UTC).timestamp()), 1)
+        set_cache_key(token_blacklist_key(jti), "revoked", ttl_seconds)
+
+    return {"mensagem": "Senha alterada com sucesso. Faca login novamente."}
 
 
 @router.post("/logout")

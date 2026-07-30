@@ -21,7 +21,8 @@ Guia de deploy: `docs/DEPLOY.md`.
 - Cadastro e login de usuarios com senha hasheada.
 - Rotas privadas protegidas por token.
 - Gestao administrativa de usuarios com permissao e status.
-- Politica de senha forte no cadastro.
+- Politica de senha forte no cadastro e na troca de senha.
+- Area "Meu perfil" com troca de senha autenticada.
 - Configuracoes sensiveis fora do codigo.
 - CRUD completo de clientes.
 - Filtros de clientes por nome e status.
@@ -30,6 +31,7 @@ Guia de deploy: `docs/DEPLOY.md`.
 - PostgreSQL como banco relacional.
 - Redis para cache de metricas do dashboard.
 - Testes automatizados cobrindo autenticacao, permissoes e CRUD de clientes.
+- Renderizacao protegida contra XSS em dados dinamicos do frontend.
 
 ## Backend
 

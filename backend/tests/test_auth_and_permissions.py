@@ -107,3 +107,46 @@ def test_logout_revoga_token(client, monkeypatch):
     assert client.get("/auth/me", headers=headers).status_code == 200
     assert client.post("/auth/logout", headers=headers).status_code == 200
     assert client.get("/auth/me", headers=headers).status_code == 401
+
+
+def test_troca_senha_segura(client):
+    create_user(client, "admin@teste.com")
+    headers = login_headers(client, "admin@teste.com")
+
+    wrong_current = client.put(
+        "/auth/trocar-senha",
+        headers=headers,
+        json={
+            "senha_atual": "SenhaErrada123",
+            "nova_senha": "NovaSenha123",
+            "confirmar_nova_senha": "NovaSenha123",
+        },
+    )
+    assert wrong_current.status_code == 400
+
+    weak_password = client.put(
+        "/auth/trocar-senha",
+        headers=headers,
+        json={
+            "senha_atual": "Senha123",
+            "nova_senha": "senhafraca",
+            "confirmar_nova_senha": "senhafraca",
+        },
+    )
+    assert weak_password.status_code == 422
+
+    changed = client.put(
+        "/auth/trocar-senha",
+        headers=headers,
+        json={
+            "senha_atual": "Senha123",
+            "nova_senha": "NovaSenha123",
+            "confirmar_nova_senha": "NovaSenha123",
+        },
+    )
+    assert changed.status_code == 200
+
+    old_login = client.post("/auth/token", data={"username": "admin@teste.com", "password": "Senha123"})
+    new_login = client.post("/auth/token", data={"username": "admin@teste.com", "password": "NovaSenha123"})
+    assert old_login.status_code == 401
+    assert new_login.status_code == 200

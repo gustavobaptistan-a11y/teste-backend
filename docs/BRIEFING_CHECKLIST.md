@@ -15,10 +15,13 @@ Mapeamento dos requisitos do teste tecnico Lifeline One para a implementacao atu
 - [x] Politica de senha forte no cadastro.
 - [x] Segredos removidos do codigo e do Docker Compose.
 - [x] Token no frontend armazenado apenas em `sessionStorage`.
+- [x] Troca de senha autenticada com validacao da senha atual.
+- [x] Logout forcado no frontend apos troca de senha.
 - [x] Headers HTTP basicos de seguranca na API.
 - [x] Cadastro publico permitido somente para bootstrap do primeiro administrador.
 - [x] Criacao posterior de usuarios restrita a administradores.
 - [x] Configuracao de API removida da tela de login.
+- [x] Renderizacao de dados dinamicos com escape contra XSS no frontend.
 
 ## Modulo 2 - Gestao de Clientes
 
@@ -62,8 +65,10 @@ Mapeamento dos requisitos do teste tecnico Lifeline One para a implementacao atu
 - [x] Ativacao/desativacao de contas.
 - [x] Acesso restrito a administradores.
 - [x] Edicao de nome/e-mail do usuario pelo frontend.
+- [x] Tela "Meu perfil" com dados da conta logada e troca de senha.
 - [x] Detalhes e edicao completa de oportunidades pelo frontend.
-- [x] Confirmacoes para acoes sensiveis no frontend.
+- [x] Confirmacoes para acoes sensiveis em modal controlado no frontend.
+- [x] Formularios de criacao recolhidos por padrao para evitar alteracoes acidentais.
 - [x] Paginacao de clientes e usuarios no frontend.
 - [x] Configuracao externa da URL da API no frontend.
 
