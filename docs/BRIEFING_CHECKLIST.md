@@ -51,7 +51,7 @@ Mapeamento dos requisitos do teste tecnico Lifeline One para a implementacao atu
 - [x] Alteracao de permissao.
 - [x] Ativacao/desativacao de contas.
 - [x] Acesso restrito a administradores.
-- [ ] Edicao de nome/e-mail do usuario pelo frontend.
+- [x] Edicao de nome/e-mail do usuario pelo frontend.
 
 ## Stack Obrigatoria
 

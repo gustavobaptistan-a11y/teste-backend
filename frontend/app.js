@@ -32,6 +32,8 @@ const els = {
   clientesTable: document.querySelector("#clientesTable"),
   leadForm: document.querySelector("#leadForm"),
   kanbanBoard: document.querySelector("#kanbanBoard"),
+  usuarioEditForm: document.querySelector("#usuarioEditForm"),
+  cancelUsuarioEdit: document.querySelector("#cancelUsuarioEdit"),
   usuariosTable: document.querySelector("#usuariosTable"),
   metricClientes: document.querySelector("#metricClientes"),
   metricLeads: document.querySelector("#metricLeads"),
@@ -191,6 +193,20 @@ function resetClienteEdit() {
   els.clienteEditForm.classList.add("hidden");
 }
 
+function fillUsuarioEditForm(usuario) {
+  els.usuarioEditForm.elements.id.value = usuario.id;
+  els.usuarioEditForm.elements.nome.value = usuario.nome;
+  els.usuarioEditForm.elements.email.value = usuario.email;
+  els.usuarioEditForm.elements.permissao.value = usuario.permissao;
+  els.usuarioEditForm.elements.ativo.value = String(usuario.ativo);
+  els.usuarioEditForm.classList.remove("hidden");
+}
+
+function resetUsuarioEdit() {
+  els.usuarioEditForm.reset();
+  els.usuarioEditForm.classList.add("hidden");
+}
+
 function leadCard(lead) {
   const currentIndex = etapas.indexOf(lead.etapa);
   const nextStage = etapas[Math.min(currentIndex + 1, etapas.length - 1)];
@@ -263,9 +279,12 @@ function renderUsuarios() {
           </td>
           <td>${usuario.ativo ? "Ativo" : "Inativo"}</td>
           <td>
-            <button class="ghost-button" data-toggle-user="${usuario.id}" data-active="${!usuario.ativo}">
-              ${usuario.ativo ? "Desativar" : "Ativar"}
-            </button>
+            <div class="row-actions">
+              <button class="ghost-button" data-edit-user="${usuario.id}">Editar</button>
+              <button class="ghost-button" data-toggle-user="${usuario.id}" data-active="${!usuario.ativo}">
+                ${usuario.ativo ? "Desativar" : "Ativar"}
+              </button>
+            </div>
           </td>
         </tr>
       `,
@@ -299,6 +318,7 @@ async function loadAll() {
   renderKanban();
   renderDashboard(metricas);
   renderUsuarios();
+  resetUsuarioEdit();
   setStatus("Dados atualizados.", true);
 }
 
@@ -435,6 +455,29 @@ els.cancelClienteEdit.addEventListener("click", () => {
   resetClienteEdit();
 });
 
+els.usuarioEditForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const payload = formData(els.usuarioEditForm);
+  const usuarioId = payload.id;
+  delete payload.id;
+  payload.ativo = payload.ativo === "true";
+
+  try {
+    await request(`/usuarios/${usuarioId}`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
+    await loadAll();
+    setStatus("Usuario atualizado.", true);
+  } catch (error) {
+    setStatus(error.message);
+  }
+});
+
+els.cancelUsuarioEdit.addEventListener("click", () => {
+  resetUsuarioEdit();
+});
+
 els.leadForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const payload = formData(els.leadForm);
@@ -458,6 +501,7 @@ document.addEventListener("click", async (event) => {
   const clienteId = event.target.dataset.deleteCliente;
   const leadId = event.target.dataset.deleteLead;
   const moveLeadId = event.target.dataset.moveLead;
+  const editUserId = event.target.dataset.editUser;
   const toggleUserId = event.target.dataset.toggleUser;
 
   try {
@@ -488,6 +532,13 @@ document.addEventListener("click", async (event) => {
         body: JSON.stringify({ etapa: event.target.dataset.stage }),
       });
       await loadAll();
+    }
+
+    if (editUserId) {
+      const usuario = state.usuarios.find((item) => String(item.id) === editUserId);
+      if (usuario) {
+        fillUsuarioEditForm(usuario);
+      }
     }
 
     if (toggleUserId) {
