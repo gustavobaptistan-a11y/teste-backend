@@ -73,6 +73,7 @@ Mapeamento dos requisitos do teste tecnico Lifeline One para a implementacao atu
 - [x] Paginacao de clientes e usuarios no frontend.
 - [x] Configuracao externa da URL da API no frontend.
 - [x] Exemplo de headers de seguranca para publicacao do frontend.
+- [x] Frontend migrado para React + Vite mantendo a API FastAPI.
 
 ## Stack Obrigatoria
 
@@ -83,6 +84,7 @@ Mapeamento dos requisitos do teste tecnico Lifeline One para a implementacao atu
 - [x] PostgreSQL.
 - [x] Redis.
 - [x] Frontend limpo e responsivo.
+- [x] Build de producao do frontend com Vite.
 - [x] Migracoes versionadas com Alembic.
 - [x] Paginacao em listagens sensiveis.
 - [x] Logout com revogacao de token via Redis.

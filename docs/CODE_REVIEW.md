@@ -10,7 +10,7 @@ tecnica.
 - `backend/app/models.py`: modelos SQLAlchemy para usuarios, clientes e leads.
 - `backend/app/schemas/`: schemas Pydantic de entrada e resposta.
 - `backend/app/core/`: banco, seguranca JWT, dependencias de autenticacao e cache Redis.
-- `frontend/`: interface web estatica consumindo a API via fetch.
+- `frontend/`: interface React + Vite consumindo a API via fetch.
 - `docs/`: checklist do briefing e roteiro de revisao.
 
 ## Decisoes Principais
@@ -43,7 +43,8 @@ tecnica.
 - Acoes destrutivas e mudancas sensiveis usam confirmacao em modal controlado.
 - Campos de senha usam `autocomplete` adequado para reduzir preenchimento incorreto.
 - `frontend/nginx.example.conf` documenta headers de seguranca para publicacao do frontend.
-- `frontend/config.example.js` documenta a URL HTTPS esperada para a API em producao.
+- `frontend/public/config.example.js` documenta a URL HTTPS esperada para a API em producao.
+- React renderiza dados dinamicos por interpolacao, sem `dangerouslySetInnerHTML`.
 - Contas inativas nao conseguem autenticar.
 - Usuarios comuns recebem `403` ao acessar endpoints administrativos.
 - Senhas nunca sao retornadas pela API.
@@ -73,6 +74,7 @@ Frontend:
 cd frontend
 npm run check
 npm run test:security
+npm run build
 ```
 
 Resultado atual:
@@ -80,6 +82,7 @@ Resultado atual:
 ```text
 13 passed
 Frontend security checks passed.
+Vite build passed.
 ```
 
 ## Execucao Local
@@ -97,7 +100,8 @@ Frontend:
 
 ```powershell
 cd frontend
-python -m http.server 5500 --bind 127.0.0.1
+npm install
+npm run dev
 ```
 
 Infra:
@@ -110,6 +114,5 @@ docker compose up -d --build
 
 - Publicar deploy final.
 - Conectar o repositorio remoto definitivo e fazer push.
-- Migrar frontend estatico para React/Next.js se o avaliador preferir uma stack mais robusta.
 - Reaplicar os headers de `frontend/nginx.example.conf` no provedor escolhido.
 - Adicionar observabilidade/log estruturado para ambiente produtivo.

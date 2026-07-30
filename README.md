@@ -8,7 +8,7 @@ operacional para CRM comercial.
 ```text
 backend/   API REST com FastAPI, JWT, SQLAlchemy e PostgreSQL
 docs/      Checklist do briefing e roteiro de code review
-frontend/  Interface web estatica com login, dashboard, clientes, kanban e usuarios
+frontend/  Interface React + Vite com login, dashboard, clientes, kanban e usuarios
 ```
 
 Checklist minucioso do briefing: `docs/BRIEFING_CHECKLIST.md`.
@@ -33,6 +33,7 @@ Guia de deploy: `docs/DEPLOY.md`.
 - Testes automatizados cobrindo autenticacao, permissoes e CRUD de clientes.
 - Renderizacao protegida contra XSS em dados dinamicos do frontend.
 - Configuracao de frontend por ambiente com exemplo para producao HTTPS.
+- Frontend React + Vite com build de producao.
 
 ## Backend
 
@@ -78,7 +79,8 @@ cd backend
 
 ```powershell
 cd frontend
-python -m http.server 5500 --bind 127.0.0.1
+npm install
+npm run dev
 ```
 
 Acesse:
@@ -87,8 +89,8 @@ Acesse:
 http://127.0.0.1:5500
 ```
 
-Configure a URL da API em `frontend/config.js` quando mudar de ambiente.
-Use `frontend/config.example.js` como referencia para producao e aponte sempre para uma API em HTTPS.
+Configure a URL da API em `frontend/public/config.js` quando mudar de ambiente.
+Use `frontend/public/config.example.js` como referencia para producao e aponte sempre para uma API em HTTPS.
 
 Validacoes do frontend:
 
@@ -96,6 +98,7 @@ Validacoes do frontend:
 cd frontend
 npm run check
 npm run test:security
+npm run build
 ```
 
 Para publicar o frontend estatico com headers de seguranca, use `frontend/nginx.example.conf` como base

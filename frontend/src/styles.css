@@ -27,19 +27,25 @@
 body {
   margin: 0;
   min-height: 100vh;
-  display: grid;
-  grid-template-columns: 260px minmax(0, 1fr);
   background: var(--bg);
   color: var(--ink);
   font-family: Arial, Helvetica, sans-serif;
   letter-spacing: 0;
 }
 
-body.logged-out {
+.app-root {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.app-root.logged-out {
   grid-template-columns: 1fr;
 }
 
-body.logged-out .sidebar {
+.app-root.logged-out .sidebar {
   display: none;
 }
 
@@ -233,6 +239,15 @@ button:disabled {
   border-color: #b8d9dc;
 }
 
+.danger-button {
+  color: var(--coral);
+}
+
+.danger-button:hover {
+  background: var(--coral-soft);
+  border-color: #efc7bf;
+}
+
 .status {
   min-height: 24px;
   margin-bottom: 12px;
@@ -399,6 +414,26 @@ button:disabled {
 
 .detail-item strong {
   overflow-wrap: anywhere;
+}
+
+.badge {
+  display: inline-grid;
+  min-height: 28px;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0 10px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.badge-green {
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.badge-coral {
+  background: var(--coral-soft);
+  color: var(--coral);
 }
 
 input,
@@ -629,7 +664,7 @@ tbody tr:hover {
 }
 
 @media (max-width: 980px) {
-  body {
+  .app-root {
     grid-template-columns: 1fr;
   }
 
