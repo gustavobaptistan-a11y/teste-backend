@@ -69,8 +69,11 @@ function NavGroup({ label, items, view, onView }) {
   return (
     <div className="nav-group">
       <span className="nav-group-label">{label}</span>
-      {items.map(([id, itemLabel]) => (
+      {items.map(([id, itemLabel, icon]) => (
         <button key={id} className={`nav-button ${view === id ? "active" : ""}`} type="button" onClick={() => onView(id)}>
+          <span className="nav-icon" aria-hidden="true">
+            {icon}
+          </span>
           {itemLabel}
         </button>
       ))}
@@ -249,17 +252,19 @@ function AuthView({ setupOpen, onLogin, onRegister, onError, status }) {
 
 function Sidebar({ view, usuario, onView, onLogout }) {
   const isAdmin = usuario?.permissao === "Administrador";
+  const operationItems = [
+    ["dashboard", "Dashboard Comercial", "D"],
+    ["clientes", "Clientes", "C"],
+  ];
   const commercialItems = [
-    ["dashboard", "Dashboard Comercial"],
-    ["clientes", "Clientes"],
-    ["kanban", "Funil Comercial"],
+    ["kanban", "Funil Comercial", "F"],
   ];
   const systemItems = [
-    ["perfil", "Meu perfil"],
+    ["perfil", "Meu perfil", "P"],
   ];
 
   if (isAdmin) {
-    systemItems.push(["usuarios", "Usuarios e Acessos"]);
+    systemItems.push(["usuarios", "Usuarios e Acessos", "U"]);
   }
 
   return (
@@ -274,7 +279,8 @@ function Sidebar({ view, usuario, onView, onLogout }) {
         </div>
       </div>
       <nav aria-label="Navegacao principal">
-        <NavGroup label="Operacao" items={commercialItems} view={view} onView={onView} />
+        <NavGroup label="Operacao" items={operationItems} view={view} onView={onView} />
+        <NavGroup label="Comercial" items={commercialItems} view={view} onView={onView} />
         <NavGroup label="Sistema" items={systemItems} view={view} onView={onView} />
       </nav>
       <div className="user-box">
@@ -286,7 +292,7 @@ function Sidebar({ view, usuario, onView, onLogout }) {
           <span>{usuario.permissao}</span>
         </div>
         <button className="icon-button sidebar-logout" type="button" onClick={onLogout} title="Sair">
-          Sair
+          &gt;
         </button>
       </div>
     </aside>
