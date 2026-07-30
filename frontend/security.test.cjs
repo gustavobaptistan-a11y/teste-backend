@@ -60,6 +60,8 @@ for (const label of requiredCrudLabels) {
 
 assert(appCode.includes('nextView === "usuarios" && !isAdmin'), "Tela de usuarios deve ser bloqueada para nao administradores.");
 assert(appCode.includes('view === "usuarios" && isAdmin'), "Renderizacao de usuarios deve depender de permissao administrativa.");
+assert(appCode.includes("Esqueci minha senha"), "Login deve orientar recuperacao de acesso sem expor dados.");
+assert(appCode.includes("Solicite a redefinicao de senha ao administrador ou a equipe de TI"), "Recuperacao de senha deve orientar contato com TI/admin.");
 
 async function runPasswordChecks() {
   const security = await import(pathToFileURL(path.join(srcDir, "utils", "security.js")).href);

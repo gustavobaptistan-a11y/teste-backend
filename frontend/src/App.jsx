@@ -105,6 +105,7 @@ function ConfirmModal({ confirmation, onResolve }) {
 function AuthView({ setupOpen, onLogin, onRegister, onError, status }) {
   const [login, setLogin] = useState({ email: "", senha: "" });
   const [register, setRegister] = useState(initialUserForm);
+  const [recoveryOpen, setRecoveryOpen] = useState(false);
 
   async function submitLogin(event) {
     event.preventDefault();
@@ -162,13 +163,12 @@ function AuthView({ setupOpen, onLogin, onRegister, onError, status }) {
               />
             </label>
             <div className="auth-options">
-              <span>Sessao por aba</span>
               <button
                 className="auth-link"
                 type="button"
-                onClick={() => onError("Solicite a redefinicao de senha ao administrador ou a equipe de TI responsavel pelo painel.")}
+                onClick={() => setRecoveryOpen(true)}
               >
-                Esqueci a senha
+                Esqueci minha senha
               </button>
             </div>
             <button className="primary-button auth-submit" type="submit">
@@ -224,6 +224,18 @@ function AuthView({ setupOpen, onLogin, onRegister, onError, status }) {
             </section>
           )}
         </div>
+        {recoveryOpen && (
+          <div className="auth-recovery-modal" role="dialog" aria-modal="true" aria-labelledby="recoveryTitle">
+            <div className="auth-recovery-panel">
+              <p className="eyebrow">Recuperacao de acesso</p>
+              <h2 id="recoveryTitle">Redefinicao de senha</h2>
+              <p>Solicite a redefinicao de senha ao administrador ou a equipe de TI responsavel pelo painel.</p>
+              <button className="primary-button" type="button" onClick={() => setRecoveryOpen(false)} autoFocus>
+                Entendi
+              </button>
+            </div>
+          </div>
+        )}
       </section>
       <section className={`status ${status.ok ? "ok" : ""}`} aria-live="polite">
         {status.message}

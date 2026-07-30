@@ -341,7 +341,7 @@ button:disabled {
 .auth-options {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 12px;
   color: #55739f;
   font-size: 13px;
@@ -364,6 +364,41 @@ button:disabled {
 .auth-link:hover {
   color: var(--teal-dark);
   text-decoration: underline;
+}
+
+.auth-recovery-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(39, 49, 62, 0.42);
+}
+
+.auth-recovery-panel {
+  width: min(390px, 100%);
+  border: 1px solid rgba(255, 255, 255, 0.82);
+  border-radius: 22px;
+  padding: 28px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 24px 60px rgba(31, 48, 73, 0.2);
+  text-align: center;
+}
+
+.auth-recovery-panel h2 {
+  font-size: 24px;
+}
+
+.auth-recovery-panel p:not(.eyebrow) {
+  margin: 12px 0 22px;
+  color: #55739f;
+  line-height: 1.45;
+}
+
+.auth-recovery-panel .primary-button {
+  width: 100%;
+  border-radius: 999px;
 }
 
 .auth-submit {
