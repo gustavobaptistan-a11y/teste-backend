@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lifeline One</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <aside class="sidebar">
+      <div>
+        <p class="eyebrow">Lifeline One</p>
+        <h1>Comercial</h1>
+      </div>
+      <nav aria-label="Navegacao principal">
+        <button class="nav-button active" data-view="dashboard">Dashboard</button>
+        <button class="nav-button" data-view="clientes">Clientes</button>
+        <button class="nav-button" data-view="kanban">Kanban</button>
+        <button class="nav-button admin-only" data-view="usuarios">Usuarios</button>
+      </nav>
+      <div class="user-box" id="userBox"></div>
+      <button id="logoutButton" class="nav-button" type="button">Sair</button>
+      <div class="api-box">
+        <label for="apiBase">API</label>
+        <input id="apiBase" type="url" value="http://127.0.0.1:8000" />
+      </div>
+    </aside>
+
+    <main class="app-shell">
+      <section id="authView" class="auth-view">
+        <div class="auth-panel">
+          <p class="eyebrow">Acesso seguro</p>
+          <h2>Entrar no painel</h2>
+          <form id="loginForm" class="auth-form">
+            <input name="email" type="email" placeholder="E-mail" required />
+            <input name="senha" type="password" placeholder="Senha" required />
+            <button class="primary-button" type="submit">Entrar</button>
+          </form>
+          <div class="divider"></div>
+          <p class="eyebrow">Primeiro acesso</p>
+          <form id="registerForm" class="auth-form">
+            <input name="nome" placeholder="Nome" required />
+            <input name="email" type="email" placeholder="E-mail" required />
+            <input name="senha" type="password" placeholder="Senha" minlength="6" required />
+            <button class="ghost-button" type="submit">Cadastrar usuario</button>
+          </form>
+        </div>
+      </section>
+
+      <section id="status" class="status" aria-live="polite"></section>
+
+      <section id="privateArea" class="private-area hidden">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Gestao integrada</p>
+          <h2 id="viewTitle">Dashboard</h2>
+        </div>
+        <button id="refreshButton" class="primary-button" type="button">Atualizar</button>
+      </header>
+
+      <section id="dashboardView" class="view active">
+        <div class="metrics-grid">
+          <article class="metric">
+            <span>Clientes ativos</span>
+            <strong id="metricClientes">0</strong>
+          </article>
+          <article class="metric">
+            <span>Oportunidades</span>
+            <strong id="metricLeads">0</strong>
+          </article>
+          <article class="metric">
+            <span>Pipeline</span>
+            <strong id="metricValor">R$ 0,00</strong>
+          </article>
+          <article class="metric">
+            <span>Conversao</span>
+            <strong id="metricConversao">0%</strong>
+          </article>
+        </div>
+        <div class="stage-summary" id="stageSummary"></div>
+      </section>
+
+      <section id="clientesView" class="view">
+        <form id="clienteFilterForm" class="filter-bar">
+          <input name="nome" placeholder="Buscar por nome" />
+          <select name="ativo">
+            <option value="">Todos os status</option>
+            <option value="true">Ativos</option>
+            <option value="false">Inativos</option>
+          </select>
+          <button class="primary-button" type="submit">Filtrar</button>
+          <button id="clearClienteFilters" class="ghost-button" type="button">Limpar</button>
+        </form>
+
+        <form id="clienteForm" class="form-grid">
+          <input name="nome" placeholder="Nome" required />
+          <input name="email" type="email" placeholder="E-mail" required />
+          <input name="telefone" placeholder="Telefone" required />
+          <input name="carteirinha" placeholder="Carteirinha" required />
+          <input name="convenio" placeholder="Convenio" required />
+          <input name="endereco" placeholder="Endereco" required />
+          <button class="primary-button" type="submit">Salvar cliente</button>
+        </form>
+
+        <section id="clienteDetail" class="detail-panel hidden"></section>
+
+        <form id="clienteEditForm" class="form-grid hidden">
+          <input type="hidden" name="id" />
+          <input name="nome" placeholder="Nome" required />
+          <input name="email" type="email" placeholder="E-mail" required />
+          <input name="telefone" placeholder="Telefone" required />
+          <input name="carteirinha" placeholder="Carteirinha" required />
+          <input name="convenio" placeholder="Convenio" required />
+          <input name="endereco" placeholder="Endereco" required />
+          <select name="ativo">
+            <option value="true">Ativo</option>
+            <option value="false">Inativo</option>
+          </select>
+          <button class="primary-button" type="submit">Atualizar cliente</button>
+          <button id="cancelClienteEdit" class="ghost-button" type="button">Cancelar</button>
+        </form>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Telefone</th>
+                <th>Convenio</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="clientesTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="kanbanView" class="view">
+        <form id="leadForm" class="form-grid lead-form">
+          <input name="titulo" placeholder="Titulo da oportunidade" required />
+          <input name="cliente_nome" placeholder="Cliente" required />
+          <input name="valor" type="number" min="0" step="0.01" placeholder="Valor" required />
+          <select name="etapa">
+            <option>Novo Lead</option>
+            <option>Em Negociacao</option>
+            <option>Proposta Enviada</option>
+            <option>Fechado</option>
+          </select>
+          <input name="descricao" placeholder="Descricao" />
+          <button class="primary-button" type="submit">Criar lead</button>
+        </form>
+        <div class="kanban-board" id="kanbanBoard"></div>
+      </section>
+
+      <section id="usuariosView" class="view">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Permissao</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="usuariosTable"></tbody>
+          </table>
+        </div>
+      </section>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

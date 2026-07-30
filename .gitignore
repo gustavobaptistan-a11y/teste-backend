@@ -1,0 +1,13 @@
+.venv/
+.git-history/
+postgresql-*.exe
+
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+.env
+*.log
+node_modules/
+dist/
+build/

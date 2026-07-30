@@ -1,0 +1,45 @@
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.orm import Session
+
+from app.core.auth import get_current_active_user
+from app.core.database import get_db
+from app.core.security import criar_token_acesso, verificar_senha
+from app.models import UsuarioModel
+from app.schemas.usuario import UsuarioResponse
+
+router = APIRouter(prefix="/auth", tags=["Autenticacao"])
+
+
+@router.post("/token")
+def login_para_token_acesso(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db),
+):
+    """Autentica por e-mail e senha, retornando um token JWT."""
+    usuario = db.query(UsuarioModel).filter(UsuarioModel.email == form_data.username).first()
+    if not usuario or not verificar_senha(form_data.password, usuario.senha_hash):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="E-mail ou senha incorretos",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    if not usuario.ativo:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Usuario inativo.",
+        )
+
+    access_token = criar_token_acesso(data={"sub": usuario.email})
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "usuario": UsuarioResponse.model_validate(usuario),
+    }
+
+
+@router.get("/me", response_model=UsuarioResponse)
+def obter_perfil(usuario: UsuarioModel = Depends(get_current_active_user)):
+    """Retorna os dados do usuario autenticado."""
+    return usuario

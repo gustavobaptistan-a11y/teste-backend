@@ -1,0 +1,426 @@
+:root {
+  color-scheme: light;
+  --bg: #f4f7f8;
+  --panel: #ffffff;
+  --ink: #172126;
+  --muted: #65747d;
+  --line: #dce5e8;
+  --teal: #007c89;
+  --teal-dark: #005f68;
+  --mint: #d9f0ec;
+  --coral: #c85f4d;
+  --amber: #b78114;
+  --green: #277557;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Arial, Helvetica, sans-serif;
+  letter-spacing: 0;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+.sidebar {
+  min-height: 100vh;
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  background: #10262c;
+  color: #fff;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: #80c8c5;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+h1,
+h2 {
+  margin: 0;
+  line-height: 1.1;
+}
+
+h1 {
+  font-size: 28px;
+}
+
+h2 {
+  font-size: 26px;
+}
+
+nav {
+  display: grid;
+  gap: 8px;
+}
+
+.nav-button,
+.primary-button,
+.ghost-button {
+  min-height: 40px;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.nav-button {
+  padding: 0 12px;
+  background: transparent;
+  color: #cce3e5;
+  text-align: left;
+}
+
+.nav-button.active,
+.nav-button:hover {
+  background: #1d4148;
+  color: #fff;
+}
+
+.api-box {
+  margin-top: auto;
+  display: grid;
+  gap: 8px;
+}
+
+.user-box {
+  display: grid;
+  gap: 4px;
+  color: #cce3e5;
+  font-size: 13px;
+}
+
+.user-box strong {
+  color: #fff;
+}
+
+.api-box label {
+  color: #cce3e5;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.api-box input {
+  width: 100%;
+  min-height: 38px;
+  border: 1px solid #31565d;
+  border-radius: 6px;
+  padding: 0 10px;
+  background: #0c1d22;
+  color: #fff;
+}
+
+.app-shell {
+  min-width: 0;
+  padding: 28px;
+}
+
+.auth-view {
+  min-height: calc(100vh - 56px);
+  display: grid;
+  place-items: center;
+}
+
+.auth-view.hidden,
+.private-area.hidden,
+.admin-only.hidden,
+.hidden {
+  display: none;
+}
+
+.private-area {
+  display: block;
+}
+
+.auth-panel {
+  width: min(420px, 100%);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 22px;
+  background: var(--panel);
+}
+
+.auth-form {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.divider {
+  height: 1px;
+  margin: 20px 0;
+  background: var(--line);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.primary-button {
+  padding: 0 16px;
+  background: var(--teal);
+  color: #fff;
+}
+
+.primary-button:hover {
+  background: var(--teal-dark);
+}
+
+.ghost-button {
+  padding: 0 10px;
+  background: #eef4f5;
+  color: var(--teal-dark);
+}
+
+.status {
+  min-height: 22px;
+  margin-bottom: 14px;
+  color: var(--coral);
+  font-weight: 700;
+}
+
+.status.ok {
+  color: var(--green);
+}
+
+.view {
+  display: none;
+}
+
+.view.active {
+  display: grid;
+  gap: 18px;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  gap: 14px;
+}
+
+.metric,
+.stage-item {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px;
+  background: var(--panel);
+}
+
+.metric span,
+.stage-item span {
+  display: block;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.metric strong {
+  display: block;
+  margin-top: 10px;
+  font-size: 30px;
+}
+
+.stage-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.stage-item strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 22px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(160px, 1fr));
+  gap: 10px;
+  align-items: end;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.lead-form {
+  grid-template-columns: 1.3fr 1fr 130px 170px 1fr auto;
+}
+
+.filter-bar {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) 180px auto auto;
+  gap: 10px;
+  align-items: end;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.detail-panel {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.detail-item {
+  display: grid;
+  gap: 4px;
+}
+
+.detail-item span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.row-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  min-width: 250px;
+}
+
+input,
+select {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0 10px;
+  background: #fff;
+  color: var(--ink);
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+}
+
+th,
+td {
+  padding: 13px 14px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+
+th {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+tr:last-child td {
+  border-bottom: 0;
+}
+
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(220px, 1fr));
+  gap: 14px;
+  align-items: start;
+}
+
+.kanban-column {
+  min-height: 340px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #eef4f5;
+}
+
+.kanban-column header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.kanban-column h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.lead-list {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+}
+
+.lead-card {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.lead-card strong {
+  font-size: 15px;
+}
+
+.lead-meta {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.lead-actions {
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 980px) {
+  body {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    min-height: auto;
+  }
+
+  .metrics-grid,
+  .form-grid,
+  .filter-bar,
+  .detail-panel,
+  .lead-form,
+  .kanban-board {
+    grid-template-columns: 1fr;
+  }
+}
