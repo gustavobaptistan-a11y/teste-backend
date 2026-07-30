@@ -172,7 +172,7 @@ function AuthView({ setupOpen, onLogin, onRegister, onError, status }) {
               </button>
             </div>
             <button className="primary-button auth-submit" type="submit">
-              Entrar no painel <span aria-hidden="true">-&gt;</span>
+              ENTRAR
             </button>
           </form>
 

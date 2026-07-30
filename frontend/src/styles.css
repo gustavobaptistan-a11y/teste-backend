@@ -403,6 +403,8 @@ button:disabled {
 
 .auth-submit {
   min-height: 44px;
+  display: grid;
+  place-items: center;
   border-radius: 999px;
   box-shadow: 0 12px 24px rgba(15, 90, 184, 0.28);
 }
