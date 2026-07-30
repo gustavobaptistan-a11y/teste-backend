@@ -981,6 +981,18 @@ function App() {
     setStatusState({ message, ok });
   }
 
+  useEffect(() => {
+    if (!status.message || !status.ok) {
+      return undefined;
+    }
+
+    const timer = window.setTimeout(() => {
+      setStatusState((current) => (current.message === status.message && current.ok === status.ok ? { message: "", ok: false } : current));
+    }, 5000);
+
+    return () => window.clearTimeout(timer);
+  }, [status]);
+
   function clearSession(showMessage = true) {
     clearStoredToken();
     setToken(null);
