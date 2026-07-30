@@ -12,6 +12,8 @@ frontend/  Interface web estatica com login, dashboard, clientes, kanban e usuar
 ```
 
 Checklist minucioso do briefing: `docs/BRIEFING_CHECKLIST.md`.
+Roteiro de code review: `docs/CODE_REVIEW.md`.
+Guia de deploy: `docs/DEPLOY.md`.
 
 ## Requisitos atendidos
 
