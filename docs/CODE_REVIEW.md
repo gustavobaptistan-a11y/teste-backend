@@ -27,6 +27,11 @@ tecnica.
 ## Seguranca
 
 - `SECRET_KEY`, expiracao de token e CORS ficam em variaveis de ambiente.
+- Configuracoes sensiveis passam por `backend/app/core/config.py`.
+- Em producao, `SECRET_KEY` ausente ou fraca bloqueia o startup.
+- `docker-compose.yml` exige variaveis via `.env`, sem senha de banco hardcoded.
+- Token do frontend fica em `sessionStorage`, reduzindo persistencia apos fechar a aba.
+- Cadastro exige senha com no minimo 8 caracteres, maiuscula, minuscula e numero.
 - Contas inativas nao conseguem autenticar.
 - Usuarios comuns recebem `403` ao acessar endpoints administrativos.
 - Senhas nunca sao retornadas pela API.
@@ -52,7 +57,7 @@ cd backend
 Resultado atual:
 
 ```text
-10 passed
+11 passed
 ```
 
 ## Execucao Local

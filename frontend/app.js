@@ -5,7 +5,7 @@ const state = {
   leads: [],
   usuarios: [],
   clienteFilters: { nome: "", ativo: "" },
-  token: localStorage.getItem("lifeline_token"),
+  token: sessionStorage.getItem("lifeline_token"),
   usuario: null,
 };
 
@@ -351,7 +351,7 @@ async function login(email, senha) {
 
   state.token = data.access_token;
   state.usuario = data.usuario;
-  localStorage.setItem("lifeline_token", state.token);
+  sessionStorage.setItem("lifeline_token", state.token);
   updateAuthUi();
   await loadAll();
 }
@@ -360,7 +360,7 @@ function logout(showMessage = true) {
   state.token = null;
   state.usuario = null;
   state.usuarios = [];
-  localStorage.removeItem("lifeline_token");
+  sessionStorage.removeItem("lifeline_token");
   switchView("dashboard");
   updateAuthUi();
   if (showMessage) {

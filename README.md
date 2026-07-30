@@ -21,6 +21,8 @@ Guia de deploy: `docs/DEPLOY.md`.
 - Cadastro e login de usuarios com senha hasheada.
 - Rotas privadas protegidas por token.
 - Gestao administrativa de usuarios com permissao e status.
+- Politica de senha forte no cadastro.
+- Configuracoes sensiveis fora do codigo.
 - CRUD completo de clientes.
 - Filtros de clientes por nome e status.
 - Kanban comercial com movimentacao de oportunidades.
@@ -49,9 +51,10 @@ http://127.0.0.1:8000/docs
 Configure `backend/.env`:
 
 ```env
-DATABASE_URL=postgresql://usuario:senha@localhost:5432/lifeline_db
+ENVIRONMENT=development
+DATABASE_URL=postgresql://usuario:senha-forte@localhost:5432/lifeline_db
 REDIS_URL=redis://localhost:6379/0
-SECRET_KEY=troque-esta-chave-em-producao
+SECRET_KEY=gere-uma-chave-com-pelo-menos-32-caracteres
 JWT_ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 CORS_ORIGINS=http://127.0.0.1:5500,http://localhost:5500
@@ -91,6 +94,7 @@ projeto. Backups locais dos historicos anteriores foram gerados em `.git-history
 Para subir API, PostgreSQL e Redis:
 
 ```powershell
+copy .env.example .env
 docker compose up -d --build
 ```
 

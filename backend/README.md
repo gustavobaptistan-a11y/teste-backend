@@ -16,9 +16,10 @@ A API fica em `http://127.0.0.1:8000` e a documentacao Swagger em `http://127.0.
 Configure a conexao no arquivo `.env`:
 
 ```env
-DATABASE_URL=postgresql://usuario:senha@localhost:5432/lifeline_db
+ENVIRONMENT=development
+DATABASE_URL=postgresql://usuario:senha-forte@localhost:5432/lifeline_db
 REDIS_URL=redis://localhost:6379/0
-SECRET_KEY=troque-esta-chave-em-producao
+SECRET_KEY=gere-uma-chave-com-pelo-menos-32-caracteres
 JWT_ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 CORS_ORIGINS=http://127.0.0.1:5500,http://localhost:5500
@@ -32,6 +33,8 @@ O primeiro usuario cadastrado recebe permissao `Administrador`. Os proximos usua
 
 Rotas de clientes, kanban, dashboard e administracao de usuarios exigem JWT. No Swagger, faca login em
 `/auth/token` e use o botao `Authorize` com o token retornado.
+
+O cadastro exige senha com no minimo 8 caracteres, letra maiuscula, letra minuscula e numero.
 
 ## Frontend
 

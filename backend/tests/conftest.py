@@ -46,14 +46,14 @@ def client():
     return TestClient(app)
 
 
-def create_user(client: TestClient, email: str, senha: str = "senha123"):
+def create_user(client: TestClient, email: str, senha: str = "Senha123"):
     return client.post(
         "/usuarios/",
         json={"nome": "Usuario Teste", "email": email, "senha": senha},
     )
 
 
-def login_headers(client: TestClient, email: str, senha: str = "senha123"):
+def login_headers(client: TestClient, email: str, senha: str = "Senha123"):
     response = client.post("/auth/token", data={"username": email, "password": senha})
     assert response.status_code == 200
     token = response.json()["access_token"]

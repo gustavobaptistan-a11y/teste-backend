@@ -12,6 +12,10 @@ Mapeamento dos requisitos do teste tecnico Lifeline One para a implementacao atu
 - [x] Bloqueio de login para contas inativas.
 - [x] Controle de permissao para rotas administrativas.
 - [x] `SECRET_KEY`, CORS e expiracao do token configuraveis por ambiente.
+- [x] Politica de senha forte no cadastro.
+- [x] Segredos removidos do codigo e do Docker Compose.
+- [x] Token no frontend armazenado apenas em `sessionStorage`.
+- [x] Headers HTTP basicos de seguranca na API.
 
 ## Modulo 2 - Gestao de Clientes
 

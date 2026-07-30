@@ -16,6 +16,12 @@ def test_segundo_usuario_vira_usuario_comum(client):
     assert response.json()["permissao"] == "Usuario Comum"
 
 
+def test_cadastro_rejeita_senha_fraca(client):
+    response = create_user(client, "fraco@teste.com", senha="senha123")
+
+    assert response.status_code == 422
+
+
 def test_dashboard_exige_token(client):
     response = client.get("/dashboard/metricas")
 
@@ -47,7 +53,7 @@ def test_usuario_inativo_nao_consegue_logar(client):
     assert response.status_code == 200
     assert client.post(
         "/auth/token",
-        data={"username": user["email"], "password": "senha123"},
+        data={"username": user["email"], "password": "Senha123"},
     ).status_code == 403
 
 

@@ -1,7 +1,5 @@
-import os
 from contextlib import asynccontextmanager
 
-from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -11,16 +9,9 @@ from app.api.dashboard import router as dashboard_router
 from app.api.home import router as home_router
 from app.api.kanban import router as kanban_router
 from app.api.usuarios import router as usuarios_router
+from app.core.config import settings
 from app.core.database import Base, engine
 from app import models
-
-load_dotenv()
-
-cors_origins = [
-    origin.strip()
-    for origin in os.getenv("CORS_ORIGINS", "http://127.0.0.1:5500,http://localhost:5500").split(",")
-    if origin.strip()
-]
 
 
 @asynccontextmanager
@@ -40,11 +31,21 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=cors_origins,
+    allow_origins=settings.cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def adicionar_headers_seguranca(request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "no-referrer"
+    response.headers["Cache-Control"] = "no-store"
+    return response
 
 
 app.include_router(home_router)

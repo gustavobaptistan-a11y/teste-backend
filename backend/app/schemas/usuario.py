@@ -1,6 +1,6 @@
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 PermissaoUsuario = Literal["Administrador", "Usuario Comum"]
 
@@ -8,7 +8,18 @@ PermissaoUsuario = Literal["Administrador", "Usuario Comum"]
 class UsuarioCreate(BaseModel):
     nome: str = Field(min_length=2, max_length=255)
     email: EmailStr
-    senha: str = Field(min_length=6, max_length=128)
+    senha: str = Field(min_length=8, max_length=128)
+
+    @field_validator("senha")
+    @classmethod
+    def validar_forca_senha(cls, senha: str) -> str:
+        if not any(char.islower() for char in senha):
+            raise ValueError("A senha deve conter ao menos uma letra minuscula.")
+        if not any(char.isupper() for char in senha):
+            raise ValueError("A senha deve conter ao menos uma letra maiuscula.")
+        if not any(char.isdigit() for char in senha):
+            raise ValueError("A senha deve conter ao menos um numero.")
+        return senha
 
 
 class UsuarioUpdate(BaseModel):

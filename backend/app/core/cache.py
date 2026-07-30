@@ -1,9 +1,8 @@
 import json
-import os
 import time
 from typing import Any
 
-from dotenv import load_dotenv
+from app.core.config import settings
 
 try:
     from redis import Redis
@@ -12,9 +11,6 @@ except ImportError:  # pragma: no cover - fallback para ambientes sem dependenci
     Redis = None
     RedisError = Exception
 
-load_dotenv()
-
-REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 DASHBOARD_METRICS_CACHE_KEY = "dashboard:metricas"
 DASHBOARD_METRICS_TTL_SECONDS = 60
 
@@ -28,12 +24,15 @@ def get_redis_client() -> Redis | None:
     if Redis is None:
         return None
 
+    if not settings.redis_url:
+        return None
+
     if time.monotonic() < _redis_retry_after:
         return None
 
     if _redis_client is None:
         _redis_client = Redis.from_url(
-            REDIS_URL,
+            settings.redis_url,
             decode_responses=True,
             socket_connect_timeout=1,
             socket_timeout=1,
