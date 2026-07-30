@@ -42,6 +42,8 @@ def load_settings() -> Settings:
     database_url = os.getenv("DATABASE_URL")
     if not database_url:
         raise RuntimeError("DATABASE_URL nao configurada.")
+    if database_url.startswith("postgresql://"):
+        database_url = database_url.replace("postgresql://", "postgresql+psycopg://", 1)
 
     secret_key = os.getenv("SECRET_KEY")
     if not secret_key:

@@ -16,7 +16,7 @@ Configure no provedor da API:
 
 ```env
 ENVIRONMENT=production
-DATABASE_URL=postgresql://usuario:senha-url-encoded@host:5432/database
+DATABASE_URL=postgresql+psycopg://usuario:senha-url-encoded@host:5432/database
 REDIS_URL=redis://host:6379/0
 SECRET_KEY=gere-uma-chave-aleatoria-com-mais-de-32-caracteres
 JWT_ALGORITHM=HS256

@@ -58,6 +58,30 @@ if (-not $dbExists) {
 
 & $psql -h 127.0.0.1 -U postgres -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE $DatabaseName TO $AppUser;"
 
+$ownershipSql = @"
+ALTER SCHEMA public OWNER TO $AppUser;
+GRANT ALL ON SCHEMA public TO $AppUser;
+DO `$`$
+DECLARE
+  item record;
+BEGIN
+  FOR item IN
+    SELECT tablename AS name FROM pg_tables WHERE schemaname = 'public'
+  LOOP
+    EXECUTE format('ALTER TABLE public.%I OWNER TO $AppUser', item.name);
+  END LOOP;
+
+  FOR item IN
+    SELECT sequencename AS name FROM pg_sequences WHERE schemaname = 'public'
+  LOOP
+    EXECUTE format('ALTER SEQUENCE public.%I OWNER TO $AppUser', item.name);
+  END LOOP;
+END
+`$`$;
+"@
+
+& $psql -h 127.0.0.1 -U postgres -d $DatabaseName -c $ownershipSql
+
 $env:PGPASSWORD = $appPassword
 & $psql -h 127.0.0.1 -U $AppUser -d $DatabaseName -c "SELECT 1;"
 if ($LASTEXITCODE -ne 0) {
@@ -68,7 +92,7 @@ $secretKey = & python -c "import secrets; print(secrets.token_urlsafe(48))"
 $envPath = Join-Path $PSScriptRoot "..\backend\.env"
 $envContent = @"
 ENVIRONMENT=development
-DATABASE_URL=postgresql://${AppUser}:${appPasswordUrl}@127.0.0.1:5432/$DatabaseName
+DATABASE_URL=postgresql+psycopg://${AppUser}:${appPasswordUrl}@127.0.0.1:5432/$DatabaseName
 REDIS_URL=
 SECRET_KEY=$secretKey
 JWT_ALGORITHM=HS256

@@ -48,6 +48,12 @@ cd backend
 ..\.venv\Scripts\python.exe -m alembic upgrade head
 ```
 
+Se o banco local ja tiver tabelas antigas e o Alembic informar que uma relacao ja existe, marque a versao atual:
+
+```powershell
+..\.venv\Scripts\python.exe -m alembic stamp head
+```
+
 ## 3. Iniciar Backend
 
 Abra um terminal:
@@ -97,6 +103,12 @@ Se instalar Redis local, use:
 
 ```env
 REDIS_URL=redis://127.0.0.1:6379/0
+```
+
+O projeto usa o driver `psycopg` 3. A URL local do PostgreSQL pode usar:
+
+```env
+DATABASE_URL=postgresql+psycopg://lifeline_user:senha@127.0.0.1:5432/lifeline_db
 ```
 
 ## Roteiro Para o Avaliador
