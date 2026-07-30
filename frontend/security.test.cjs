@@ -28,6 +28,39 @@ assert(appCode.includes('autoComplete="current-password"'), "Login/troca devem u
 assert(appCode.includes('autoComplete="new-password"'), "Cadastro/troca devem usar autocomplete new-password.");
 assert(apiCode.includes("Authorization") && apiCode.includes("Bearer"), "Requisicoes autenticadas devem enviar Authorization Bearer via camada segura.");
 
+const requiredNavigation = [
+  "Dashboard Comercial",
+  "Clientes",
+  "Funil Comercial",
+  "Meu perfil",
+  "Usuarios e Acessos",
+];
+
+const requiredViews = [
+  "function DashboardView",
+  "function ClientesView",
+  "function KanbanView",
+  "function PerfilView",
+  "function UsuariosView",
+];
+
+const requiredCrudLabels = ["Detalhes", "Editar", "Excluir", "Filtrar", "Ativos", "Inativos"];
+
+for (const label of requiredNavigation) {
+  assert(appCode.includes(label), `Navegacao obrigatoria ausente: ${label}.`);
+}
+
+for (const view of requiredViews) {
+  assert(appCode.includes(view), `Tela obrigatoria ausente: ${view}.`);
+}
+
+for (const label of requiredCrudLabels) {
+  assert(appCode.includes(label), `Acao ou filtro obrigatorio ausente no frontend: ${label}.`);
+}
+
+assert(appCode.includes('nextView === "usuarios" && !isAdmin'), "Tela de usuarios deve ser bloqueada para nao administradores.");
+assert(appCode.includes('view === "usuarios" && isAdmin'), "Renderizacao de usuarios deve depender de permissao administrativa.");
+
 async function runPasswordChecks() {
   const security = await import(pathToFileURL(path.join(srcDir, "utils", "security.js")).href);
   assert(security.strongPassword("Senha123"), "Senha forte valida deve ser aceita.");
