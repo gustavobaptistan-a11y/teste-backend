@@ -32,6 +32,7 @@ Guia de deploy: `docs/DEPLOY.md`.
 - Redis para cache de metricas do dashboard.
 - Testes automatizados cobrindo autenticacao, permissoes e CRUD de clientes.
 - Renderizacao protegida contra XSS em dados dinamicos do frontend.
+- Configuracao de frontend por ambiente com exemplo para producao HTTPS.
 
 ## Backend
 
@@ -87,6 +88,18 @@ http://127.0.0.1:5500
 ```
 
 Configure a URL da API em `frontend/config.js` quando mudar de ambiente.
+Use `frontend/config.example.js` como referencia para producao e aponte sempre para uma API em HTTPS.
+
+Validacoes do frontend:
+
+```powershell
+cd frontend
+npm run check
+npm run test:security
+```
+
+Para publicar o frontend estatico com headers de seguranca, use `frontend/nginx.example.conf` como base
+ou replique os mesmos headers no provedor escolhido.
 
 ## Historico
 
@@ -104,4 +117,4 @@ docker compose up -d --build
 
 ## Proxima etapa
 
-Preparar roteiro de entrega/code review e, se desejado, publicar o deploy.
+Publicar o deploy final, se desejado, usando HTTPS e headers de seguranca no frontend.

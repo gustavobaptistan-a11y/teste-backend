@@ -41,6 +41,9 @@ tecnica.
 - Configuracao da URL da API nao e exibida na tela de login.
 - Campos dinamicos renderizados no frontend passam por escape para reduzir risco de XSS.
 - Acoes destrutivas e mudancas sensiveis usam confirmacao em modal controlado.
+- Campos de senha usam `autocomplete` adequado para reduzir preenchimento incorreto.
+- `frontend/nginx.example.conf` documenta headers de seguranca para publicacao do frontend.
+- `frontend/config.example.js` documenta a URL HTTPS esperada para a API em producao.
 - Contas inativas nao conseguem autenticar.
 - Usuarios comuns recebem `403` ao acessar endpoints administrativos.
 - Senhas nunca sao retornadas pela API.
@@ -64,10 +67,19 @@ cd backend
 ..\.venv\Scripts\python.exe -m pytest -q
 ```
 
+Frontend:
+
+```powershell
+cd frontend
+npm run check
+npm run test:security
+```
+
 Resultado atual:
 
 ```text
 13 passed
+Frontend security checks passed.
 ```
 
 ## Execucao Local
@@ -99,4 +111,5 @@ docker compose up -d --build
 - Publicar deploy final.
 - Conectar o repositorio remoto definitivo e fazer push.
 - Migrar frontend estatico para React/Next.js se o avaliador preferir uma stack mais robusta.
+- Reaplicar os headers de `frontend/nginx.example.conf` no provedor escolhido.
 - Adicionar observabilidade/log estruturado para ambiente produtivo.

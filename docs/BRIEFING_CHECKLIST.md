@@ -22,6 +22,7 @@ Mapeamento dos requisitos do teste tecnico Lifeline One para a implementacao atu
 - [x] Criacao posterior de usuarios restrita a administradores.
 - [x] Configuracao de API removida da tela de login.
 - [x] Renderizacao de dados dinamicos com escape contra XSS no frontend.
+- [x] Campos sensiveis com `autocomplete` adequado.
 
 ## Modulo 2 - Gestao de Clientes
 
@@ -71,6 +72,7 @@ Mapeamento dos requisitos do teste tecnico Lifeline One para a implementacao atu
 - [x] Formularios de criacao recolhidos por padrao para evitar alteracoes acidentais.
 - [x] Paginacao de clientes e usuarios no frontend.
 - [x] Configuracao externa da URL da API no frontend.
+- [x] Exemplo de headers de seguranca para publicacao do frontend.
 
 ## Stack Obrigatoria
 
@@ -91,5 +93,6 @@ Mapeamento dos requisitos do teste tecnico Lifeline One para a implementacao atu
 - [x] README de execucao.
 - [x] `docker-compose.yml`.
 - [x] Testes automatizados de seguranca e CRUD.
+- [x] Testes leves de seguranca do frontend.
 - [ ] Deploy publicado.
 - [x] Roteiro de code review final.

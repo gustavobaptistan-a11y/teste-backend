@@ -32,7 +32,14 @@ docker compose up -d --build
 http://servidor:8000/docs
 ```
 
-4. Sirva o frontend como arquivos estaticos em Nginx, Apache, Vercel, Netlify ou outro host estatico.
+4. Configure `frontend/config.js` com a URL publica da API em HTTPS:
+
+```js
+window.LIFELINE_API_BASE = "https://api.seu-dominio.com";
+```
+
+5. Sirva o frontend como arquivos estaticos em Nginx, Apache, Vercel, Netlify ou outro host estatico.
+Use `frontend/nginx.example.conf` como referencia quando usar Nginx.
 
 ## Opcao 2 - Servicos Gerenciados
 
@@ -56,8 +63,11 @@ CORS_ORIGINS=
 - [ ] Trocar `POSTGRES_PASSWORD`.
 - [ ] Usar senha URL-encoded dentro de `DATABASE_URL` se ela tiver caracteres especiais.
 - [ ] Definir `CORS_ORIGINS` com a URL real do frontend.
+- [ ] Configurar `frontend/config.js` com a URL HTTPS real da API.
+- [ ] Servir o frontend com `Content-Security-Policy`, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy` e `Permissions-Policy`.
 - [ ] Confirmar que `.env` nao esta versionado.
 - [ ] Rodar `pytest -q`.
+- [ ] Rodar `npm run check` e `npm run test:security` dentro de `frontend`.
 - [ ] Confirmar que o primeiro usuario admin foi criado.
 - [ ] Testar login, dashboard, clientes, kanban e usuarios no ambiente publicado.
 

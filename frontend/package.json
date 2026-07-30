@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "scripts": {
+    "check": "node --check app.js",
+    "test:security": "node security.test.js"
+  }
+}

@@ -29,17 +29,17 @@
           <p class="eyebrow">Acesso seguro</p>
           <h2>Entrar no painel</h2>
           <form id="loginForm" class="auth-form">
-            <input name="email" type="email" placeholder="E-mail" required />
-            <input name="senha" type="password" placeholder="Senha" required />
+            <input name="email" type="email" placeholder="E-mail" autocomplete="username" required />
+            <input name="senha" type="password" placeholder="Senha" autocomplete="current-password" required />
             <button class="primary-button" type="submit">Entrar</button>
           </form>
           <section id="setupPanel" class="hidden">
             <div class="divider"></div>
             <p class="eyebrow">Primeiro acesso</p>
             <form id="registerForm" class="auth-form">
-              <input name="nome" placeholder="Nome" required />
-              <input name="email" type="email" placeholder="E-mail" required />
-              <input name="senha" type="password" placeholder="Senha forte" minlength="8" required />
+              <input name="nome" placeholder="Nome" autocomplete="name" required />
+              <input name="email" type="email" placeholder="E-mail" autocomplete="username" required />
+              <input name="senha" type="password" placeholder="Senha forte" autocomplete="new-password" minlength="8" required />
               <span class="password-hint" data-password-hint="register">
                 Minimo 8 caracteres, com maiuscula, minuscula e numero.
               </span>
@@ -84,7 +84,7 @@
 
       <section id="clientesView" class="view">
         <form id="clienteFilterForm" class="filter-bar">
-          <input name="nome" placeholder="Buscar por nome" />
+          <input name="nome" placeholder="Buscar por nome" autocomplete="off" />
           <select name="ativo">
             <option value="">Todos os status</option>
             <option value="true">Ativos</option>
@@ -99,12 +99,12 @@
         </div>
 
         <form id="clienteForm" class="form-grid hidden">
-          <input name="nome" placeholder="Nome" required />
-          <input name="email" type="email" placeholder="E-mail" required />
-          <input name="telefone" placeholder="Telefone" required />
-          <input name="empresa" placeholder="Empresa" />
-          <input name="origem" placeholder="Origem" />
-          <input name="observacoes" placeholder="Observacoes" />
+          <input name="nome" placeholder="Nome" autocomplete="name" required />
+          <input name="email" type="email" placeholder="E-mail" autocomplete="email" required />
+          <input name="telefone" placeholder="Telefone" autocomplete="tel" required />
+          <input name="empresa" placeholder="Empresa" autocomplete="organization" />
+          <input name="origem" placeholder="Origem" autocomplete="off" />
+          <input name="observacoes" placeholder="Observacoes" autocomplete="off" />
           <button class="primary-button" type="submit">Salvar cliente</button>
         </form>
 
@@ -112,12 +112,12 @@
 
         <form id="clienteEditForm" class="form-grid hidden">
           <input type="hidden" name="id" />
-          <input name="nome" placeholder="Nome" required />
-          <input name="email" type="email" placeholder="E-mail" required />
-          <input name="telefone" placeholder="Telefone" required />
-          <input name="empresa" placeholder="Empresa" />
-          <input name="origem" placeholder="Origem" />
-          <input name="observacoes" placeholder="Observacoes" />
+          <input name="nome" placeholder="Nome" autocomplete="name" required />
+          <input name="email" type="email" placeholder="E-mail" autocomplete="email" required />
+          <input name="telefone" placeholder="Telefone" autocomplete="tel" required />
+          <input name="empresa" placeholder="Empresa" autocomplete="organization" />
+          <input name="origem" placeholder="Origem" autocomplete="off" />
+          <input name="observacoes" placeholder="Observacoes" autocomplete="off" />
           <select name="ativo">
             <option value="true">Ativo</option>
             <option value="false">Inativo</option>
@@ -155,8 +155,8 @@
         </div>
 
         <form id="leadForm" class="form-grid lead-form hidden">
-          <input name="titulo" placeholder="Titulo da oportunidade" required />
-          <input name="cliente_nome" placeholder="Cliente" required />
+          <input name="titulo" placeholder="Titulo da oportunidade" autocomplete="off" required />
+          <input name="cliente_nome" placeholder="Cliente" autocomplete="off" required />
           <input name="valor" type="number" min="0" step="0.01" placeholder="Valor" required />
           <select name="etapa">
             <option>Novo Lead</option>
@@ -164,7 +164,7 @@
             <option>Proposta Enviada</option>
             <option>Fechado</option>
           </select>
-          <input name="descricao" placeholder="Descricao" />
+          <input name="descricao" placeholder="Descricao" autocomplete="off" />
           <button class="primary-button" type="submit">Criar lead</button>
         </form>
 
@@ -172,8 +172,8 @@
 
         <form id="leadEditForm" class="form-grid lead-form hidden">
           <input type="hidden" name="id" />
-          <input name="titulo" placeholder="Titulo da oportunidade" required />
-          <input name="cliente_nome" placeholder="Cliente" required />
+          <input name="titulo" placeholder="Titulo da oportunidade" autocomplete="off" required />
+          <input name="cliente_nome" placeholder="Cliente" autocomplete="off" required />
           <input name="valor" type="number" min="0" step="0.01" placeholder="Valor" required />
           <select name="etapa">
             <option>Novo Lead</option>
@@ -181,7 +181,7 @@
             <option>Proposta Enviada</option>
             <option>Fechado</option>
           </select>
-          <input name="descricao" placeholder="Descricao" />
+          <input name="descricao" placeholder="Descricao" autocomplete="off" />
           <button class="primary-button" type="submit">Atualizar lead</button>
           <button id="cancelLeadEdit" class="ghost-button" type="button">Cancelar</button>
         </form>
@@ -193,9 +193,9 @@
         <section id="profileSummary" class="detail-panel"></section>
 
         <form id="passwordForm" class="form-grid password-form">
-          <input name="senha_atual" type="password" placeholder="Senha atual" required />
-          <input name="nova_senha" type="password" placeholder="Nova senha forte" minlength="8" required />
-          <input name="confirmar_nova_senha" type="password" placeholder="Confirmar nova senha" minlength="8" required />
+          <input name="senha_atual" type="password" placeholder="Senha atual" autocomplete="current-password" required />
+          <input name="nova_senha" type="password" placeholder="Nova senha forte" autocomplete="new-password" minlength="8" required />
+          <input name="confirmar_nova_senha" type="password" placeholder="Confirmar nova senha" autocomplete="new-password" minlength="8" required />
           <span class="password-hint" data-password-hint="profile">
             Minimo 8 caracteres, com maiuscula, minuscula e numero.
           </span>
@@ -209,9 +209,9 @@
         </div>
 
         <form id="usuarioCreateForm" class="form-grid hidden">
-          <input name="nome" placeholder="Nome" required />
-          <input name="email" type="email" placeholder="E-mail" required />
-          <input name="senha" type="password" placeholder="Senha forte" minlength="8" required />
+          <input name="nome" placeholder="Nome" autocomplete="name" required />
+          <input name="email" type="email" placeholder="E-mail" autocomplete="username" required />
+          <input name="senha" type="password" placeholder="Senha forte" autocomplete="new-password" minlength="8" required />
           <span class="password-hint" data-password-hint="user">
             Minimo 8 caracteres, com maiuscula, minuscula e numero.
           </span>
@@ -220,8 +220,8 @@
 
         <form id="usuarioEditForm" class="form-grid hidden">
           <input type="hidden" name="id" />
-          <input name="nome" placeholder="Nome" required />
-          <input name="email" type="email" placeholder="E-mail" required />
+          <input name="nome" placeholder="Nome" autocomplete="name" required />
+          <input name="email" type="email" placeholder="E-mail" autocomplete="username" required />
           <select name="permissao">
             <option>Administrador</option>
             <option>Usuario Comum</option>
