@@ -84,6 +84,8 @@ Acesse:
 http://127.0.0.1:5500
 ```
 
+Configure a URL da API em `frontend/config.js` quando mudar de ambiente.
+
 ## Historico
 
 Os repositorios separados de `backend` e `frontend` foram consolidados em um repositorio unico na raiz do

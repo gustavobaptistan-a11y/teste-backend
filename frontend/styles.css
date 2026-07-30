@@ -89,6 +89,11 @@ nav {
   font-weight: 700;
 }
 
+button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
 .nav-button {
   padding: 0 12px;
   background: transparent;
@@ -310,6 +315,18 @@ select {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--panel);
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.pager span {
+  color: var(--muted);
+  font-weight: 700;
 }
 
 table {

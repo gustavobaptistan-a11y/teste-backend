@@ -134,6 +134,11 @@
             <tbody id="clientesTable"></tbody>
           </table>
         </div>
+        <div class="pager">
+          <button id="prevClientesPage" class="ghost-button" type="button">Anterior</button>
+          <span id="clientesPageInfo">Pagina 1</span>
+          <button id="nextClientesPage" class="ghost-button" type="button">Proxima</button>
+        </div>
       </section>
 
       <section id="kanbanView" class="view">
@@ -150,6 +155,25 @@
           <input name="descricao" placeholder="Descricao" />
           <button class="primary-button" type="submit">Criar lead</button>
         </form>
+
+        <section id="leadDetail" class="detail-panel hidden"></section>
+
+        <form id="leadEditForm" class="form-grid lead-form hidden">
+          <input type="hidden" name="id" />
+          <input name="titulo" placeholder="Titulo da oportunidade" required />
+          <input name="cliente_nome" placeholder="Cliente" required />
+          <input name="valor" type="number" min="0" step="0.01" placeholder="Valor" required />
+          <select name="etapa">
+            <option>Novo Lead</option>
+            <option>Em Negociacao</option>
+            <option>Proposta Enviada</option>
+            <option>Fechado</option>
+          </select>
+          <input name="descricao" placeholder="Descricao" />
+          <button class="primary-button" type="submit">Atualizar lead</button>
+          <button id="cancelLeadEdit" class="ghost-button" type="button">Cancelar</button>
+        </form>
+
         <div class="kanban-board" id="kanbanBoard"></div>
       </section>
 
@@ -191,10 +215,16 @@
             <tbody id="usuariosTable"></tbody>
           </table>
         </div>
+        <div class="pager">
+          <button id="prevUsuariosPage" class="ghost-button" type="button">Anterior</button>
+          <span id="usuariosPageInfo">Pagina 1</span>
+          <button id="nextUsuariosPage" class="ghost-button" type="button">Proxima</button>
+        </div>
       </section>
       </section>
     </main>
 
+    <script src="./config.js"></script>
     <script src="./app.js"></script>
   </body>
 </html>

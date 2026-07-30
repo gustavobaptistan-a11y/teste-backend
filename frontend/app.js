@@ -5,6 +5,9 @@ const state = {
   leads: [],
   usuarios: [],
   clienteFilters: { nome: "", ativo: "" },
+  clientesPage: { skip: 0, limit: 10 },
+  usuariosPage: { skip: 0, limit: 10 },
+  loading: false,
   setupOpen: false,
   token: sessionStorage.getItem("lifeline_token"),
   usuario: null,
@@ -31,12 +34,21 @@ const els = {
   cancelClienteEdit: document.querySelector("#cancelClienteEdit"),
   clienteDetail: document.querySelector("#clienteDetail"),
   clientesTable: document.querySelector("#clientesTable"),
+  prevClientesPage: document.querySelector("#prevClientesPage"),
+  nextClientesPage: document.querySelector("#nextClientesPage"),
+  clientesPageInfo: document.querySelector("#clientesPageInfo"),
   leadForm: document.querySelector("#leadForm"),
+  leadEditForm: document.querySelector("#leadEditForm"),
+  cancelLeadEdit: document.querySelector("#cancelLeadEdit"),
+  leadDetail: document.querySelector("#leadDetail"),
   kanbanBoard: document.querySelector("#kanbanBoard"),
   usuarioCreateForm: document.querySelector("#usuarioCreateForm"),
   usuarioEditForm: document.querySelector("#usuarioEditForm"),
   cancelUsuarioEdit: document.querySelector("#cancelUsuarioEdit"),
   usuariosTable: document.querySelector("#usuariosTable"),
+  prevUsuariosPage: document.querySelector("#prevUsuariosPage"),
+  nextUsuariosPage: document.querySelector("#nextUsuariosPage"),
+  usuariosPageInfo: document.querySelector("#usuariosPageInfo"),
   metricClientes: document.querySelector("#metricClientes"),
   metricLeads: document.querySelector("#metricLeads"),
   metricValor: document.querySelector("#metricValor"),
@@ -44,9 +56,12 @@ const els = {
   stageSummary: document.querySelector("#stageSummary"),
 };
 
-const API_BASE = window.LIFELINE_API_BASE || "http://127.0.0.1:8000";
+const API_BASE = window.LIFELINE_API_BASE;
 
 function apiUrl(path) {
+  if (!API_BASE) {
+    throw new Error("Configuracao da API ausente. Verifique frontend/config.js.");
+  }
   return `${API_BASE.replace(/\/$/, "")}${path}`;
 }
 
@@ -60,6 +75,28 @@ function money(value) {
 function setStatus(message, ok = false) {
   els.status.textContent = message;
   els.status.classList.toggle("ok", ok);
+}
+
+function setBusy(isBusy) {
+  state.loading = isBusy;
+  document.querySelectorAll("button").forEach((button) => {
+    button.disabled = isBusy;
+  });
+  updatePagers();
+}
+
+function updatePagers() {
+  if (!els.prevClientesPage || !els.prevUsuariosPage) {
+    return;
+  }
+  els.prevClientesPage.disabled = state.loading || state.clientesPage.skip === 0;
+  els.nextClientesPage.disabled = state.loading || state.clientes.length < state.clientesPage.limit;
+  els.prevUsuariosPage.disabled = state.loading || state.usuariosPage.skip === 0;
+  els.nextUsuariosPage.disabled = state.loading || state.usuarios.length < state.usuariosPage.limit;
+}
+
+function confirmAction(message) {
+  return window.confirm(message);
 }
 
 async function request(path, options = {}) {
@@ -124,8 +161,17 @@ function clientesQueryString() {
   if (state.clienteFilters.ativo) {
     params.set("ativo", state.clienteFilters.ativo);
   }
+  params.set("skip", state.clientesPage.skip);
+  params.set("limit", state.clientesPage.limit);
   const query = params.toString();
   return query ? `?${query}` : "";
+}
+
+function usuariosQueryString() {
+  const params = new URLSearchParams();
+  params.set("skip", state.usuariosPage.skip);
+  params.set("limit", state.usuariosPage.limit);
+  return `?${params.toString()}`;
 }
 
 function isAdmin() {
@@ -163,6 +209,16 @@ function switchView(view) {
 }
 
 function renderClientes() {
+  const page = Math.floor(state.clientesPage.skip / state.clientesPage.limit) + 1;
+  els.clientesPageInfo.textContent = `Pagina ${page}`;
+  els.prevClientesPage.disabled = state.clientesPage.skip === 0 || state.loading;
+  els.nextClientesPage.disabled = state.clientes.length < state.clientesPage.limit || state.loading;
+
+  if (!state.clientes.length) {
+    els.clientesTable.innerHTML = '<tr><td colspan="6">Nenhum cliente encontrado.</td></tr>';
+    return;
+  }
+
   els.clientesTable.innerHTML = state.clientes
     .map(
       (cliente) => `
@@ -231,6 +287,33 @@ function resetUsuarioEdit() {
   els.usuarioEditForm.classList.add("hidden");
 }
 
+function renderLeadDetail(lead) {
+  els.leadDetail.innerHTML = `
+    <div class="detail-item"><span>Titulo</span><strong>${lead.titulo}</strong></div>
+    <div class="detail-item"><span>Cliente</span><strong>${lead.cliente_nome}</strong></div>
+    <div class="detail-item"><span>Valor</span><strong>${money(lead.valor)}</strong></div>
+    <div class="detail-item"><span>Etapa</span><strong>${lead.etapa}</strong></div>
+    <div class="detail-item"><span>Descricao</span><strong>${lead.descricao || "-"}</strong></div>
+  `;
+  els.leadDetail.classList.remove("hidden");
+}
+
+function fillLeadEditForm(lead) {
+  els.leadEditForm.elements.id.value = lead.id;
+  els.leadEditForm.elements.titulo.value = lead.titulo;
+  els.leadEditForm.elements.cliente_nome.value = lead.cliente_nome;
+  els.leadEditForm.elements.valor.value = lead.valor;
+  els.leadEditForm.elements.etapa.value = lead.etapa;
+  els.leadEditForm.elements.descricao.value = lead.descricao || "";
+  els.leadEditForm.classList.remove("hidden");
+  els.leadDetail.classList.add("hidden");
+}
+
+function resetLeadEdit() {
+  els.leadEditForm.reset();
+  els.leadEditForm.classList.add("hidden");
+}
+
 function leadCard(lead) {
   const currentIndex = etapas.indexOf(lead.etapa);
   const nextStage = etapas[Math.min(currentIndex + 1, etapas.length - 1)];
@@ -242,6 +325,8 @@ function leadCard(lead) {
       <span class="lead-meta">${lead.cliente_nome} - ${money(lead.valor)}</span>
       ${lead.descricao ? `<span class="lead-meta">${lead.descricao}</span>` : ""}
       <div class="lead-actions">
+        <button class="ghost-button" data-detail-lead="${lead.id}">Detalhes</button>
+        <button class="ghost-button" data-edit-lead="${lead.id}">Editar</button>
         <button class="ghost-button" data-move-lead="${lead.id}" data-stage="${prevStage}">Voltar</button>
         <button class="ghost-button" data-move-lead="${lead.id}" data-stage="${nextStage}">Avancar</button>
         <button class="ghost-button" data-delete-lead="${lead.id}">Excluir</button>
@@ -261,7 +346,7 @@ function renderKanban() {
             <strong>${leads.length}</strong>
           </header>
           <div class="lead-list" data-drop-stage="${etapa}">
-            ${leads.map(leadCard).join("") || '<span class="lead-meta">Sem cards</span>'}
+            ${leads.map(leadCard).join("") || '<span class="lead-meta">Nenhuma oportunidade nesta etapa.</span>'}
           </div>
         </section>
       `;
@@ -289,6 +374,16 @@ function renderDashboard(metricas) {
 }
 
 function renderUsuarios() {
+  const page = Math.floor(state.usuariosPage.skip / state.usuariosPage.limit) + 1;
+  els.usuariosPageInfo.textContent = `Pagina ${page}`;
+  els.prevUsuariosPage.disabled = state.usuariosPage.skip === 0 || state.loading;
+  els.nextUsuariosPage.disabled = state.usuarios.length < state.usuariosPage.limit || state.loading;
+
+  if (!state.usuarios.length) {
+    els.usuariosTable.innerHTML = '<tr><td colspan="5">Nenhum usuario encontrado.</td></tr>';
+    return;
+  }
+
   els.usuariosTable.innerHTML = state.usuarios
     .map(
       (usuario) => `
@@ -323,27 +418,34 @@ async function loadAll() {
   }
 
   setStatus("Carregando dados...");
-  const requests = [
-    request(`/clientes/${clientesQueryString()}`),
-    request("/kanban/"),
-    request("/dashboard/metricas"),
-  ];
-  if (isAdmin()) {
-    requests.push(request("/usuarios/"));
-  }
+  setBusy(true);
+  try {
+    const requests = [
+      request(`/clientes/${clientesQueryString()}`),
+      request("/kanban/"),
+      request("/dashboard/metricas"),
+    ];
+    if (isAdmin()) {
+      requests.push(request(`/usuarios/${usuariosQueryString()}`));
+    }
 
-  const [clientes, leads, metricas, usuarios = []] = await Promise.all(requests);
-  state.clientes = clientes;
-  state.leads = leads;
-  state.usuarios = usuarios;
-  renderClientes();
-  resetClienteEdit();
-  els.clienteDetail.classList.add("hidden");
-  renderKanban();
-  renderDashboard(metricas);
-  renderUsuarios();
-  resetUsuarioEdit();
-  setStatus("Dados atualizados.", true);
+    const [clientes, leads, metricas, usuarios = []] = await Promise.all(requests);
+    state.clientes = clientes;
+    state.leads = leads;
+    state.usuarios = usuarios;
+    renderClientes();
+    resetClienteEdit();
+    els.clienteDetail.classList.add("hidden");
+    renderKanban();
+    resetLeadEdit();
+    els.leadDetail.classList.add("hidden");
+    renderDashboard(metricas);
+    renderUsuarios();
+    resetUsuarioEdit();
+    setStatus("Dados atualizados.", true);
+  } finally {
+    setBusy(false);
+  }
 }
 
 async function hydrateSession() {
@@ -407,7 +509,11 @@ els.refreshButton.addEventListener("click", () => {
   loadAll().catch((error) => setStatus(error.message));
 });
 
-els.logoutButton.addEventListener("click", () => logout());
+els.logoutButton.addEventListener("click", () => {
+  if (confirmAction("Deseja encerrar sua sessao?")) {
+    logout();
+  }
+});
 
 els.loginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -457,12 +563,24 @@ els.clienteFilterForm.addEventListener("submit", async (event) => {
     nome: payload.nome.trim(),
     ativo: payload.ativo,
   };
+  state.clientesPage.skip = 0;
   await loadAll().catch((error) => setStatus(error.message));
 });
 
 els.clearClienteFilters.addEventListener("click", async () => {
   els.clienteFilterForm.reset();
   state.clienteFilters = { nome: "", ativo: "" };
+  state.clientesPage.skip = 0;
+  await loadAll().catch((error) => setStatus(error.message));
+});
+
+els.prevClientesPage.addEventListener("click", async () => {
+  state.clientesPage.skip = Math.max(0, state.clientesPage.skip - state.clientesPage.limit);
+  await loadAll().catch((error) => setStatus(error.message));
+});
+
+els.nextClientesPage.addEventListener("click", async () => {
+  state.clientesPage.skip += state.clientesPage.limit;
   await loadAll().catch((error) => setStatus(error.message));
 });
 
@@ -525,6 +643,16 @@ els.cancelUsuarioEdit.addEventListener("click", () => {
   resetUsuarioEdit();
 });
 
+els.prevUsuariosPage.addEventListener("click", async () => {
+  state.usuariosPage.skip = Math.max(0, state.usuariosPage.skip - state.usuariosPage.limit);
+  await loadAll().catch((error) => setStatus(error.message));
+});
+
+els.nextUsuariosPage.addEventListener("click", async () => {
+  state.usuariosPage.skip += state.usuariosPage.limit;
+  await loadAll().catch((error) => setStatus(error.message));
+});
+
 els.leadForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const payload = formData(els.leadForm);
@@ -542,10 +670,35 @@ els.leadForm.addEventListener("submit", async (event) => {
   }
 });
 
+els.leadEditForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const payload = formData(els.leadEditForm);
+  const leadId = payload.id;
+  delete payload.id;
+  payload.valor = Number(payload.valor);
+
+  try {
+    await request(`/kanban/${leadId}`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
+    await loadAll();
+    setStatus("Lead atualizado.", true);
+  } catch (error) {
+    setStatus(error.message);
+  }
+});
+
+els.cancelLeadEdit.addEventListener("click", () => {
+  resetLeadEdit();
+});
+
 document.addEventListener("click", async (event) => {
   const detailClienteId = event.target.dataset.detailCliente;
   const editClienteId = event.target.dataset.editCliente;
   const clienteId = event.target.dataset.deleteCliente;
+  const detailLeadId = event.target.dataset.detailLead;
+  const editLeadId = event.target.dataset.editLead;
   const leadId = event.target.dataset.deleteLead;
   const moveLeadId = event.target.dataset.moveLead;
   const editUserId = event.target.dataset.editUser;
@@ -564,11 +717,28 @@ document.addEventListener("click", async (event) => {
     }
 
     if (clienteId) {
+      if (!confirmAction("Excluir este cliente? Esta acao nao pode ser desfeita.")) {
+        return;
+      }
       await request(`/clientes/${clienteId}`, { method: "DELETE" });
       await loadAll();
     }
 
+    if (detailLeadId) {
+      const lead = await request(`/kanban/${detailLeadId}`);
+      resetLeadEdit();
+      renderLeadDetail(lead);
+    }
+
+    if (editLeadId) {
+      const lead = await request(`/kanban/${editLeadId}`);
+      fillLeadEditForm(lead);
+    }
+
     if (leadId) {
+      if (!confirmAction("Excluir esta oportunidade? Esta acao nao pode ser desfeita.")) {
+        return;
+      }
       await request(`/kanban/${leadId}`, { method: "DELETE" });
       await loadAll();
     }
@@ -589,6 +759,10 @@ document.addEventListener("click", async (event) => {
     }
 
     if (toggleUserId) {
+      const action = event.target.dataset.active === "true" ? "ativar" : "desativar";
+      if (!confirmAction(`Deseja ${action} este usuario?`)) {
+        return;
+      }
       await request(`/usuarios/${toggleUserId}/status`, {
         method: "PATCH",
         body: JSON.stringify({ ativo: event.target.dataset.active === "true" }),
@@ -607,6 +781,10 @@ document.addEventListener("change", async (event) => {
   }
 
   try {
+    if (!confirmAction("Alterar a permissao deste usuario?")) {
+      await loadAll();
+      return;
+    }
     await request(`/usuarios/${userId}/permissao`, {
       method: "PATCH",
       body: JSON.stringify({ permissao: event.target.value }),
