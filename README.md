@@ -21,6 +21,7 @@ frontend/  Interface web estatica com login, dashboard, clientes, kanban e usuar
 - Kanban comercial com movimentacao de oportunidades.
 - Dashboard comercial com metricas consolidadas.
 - PostgreSQL como banco relacional.
+- Redis para cache de metricas do dashboard.
 
 ## Backend
 
@@ -43,6 +44,7 @@ Configure `backend/.env`:
 
 ```env
 DATABASE_URL=postgresql://usuario:senha@localhost:5432/lifeline_db
+REDIS_URL=redis://localhost:6379/0
 ```
 
 O primeiro usuario cadastrado recebe permissao `Administrador`. Os proximos entram como
@@ -66,6 +68,14 @@ http://127.0.0.1:5500
 Os repositorios separados de `backend` e `frontend` foram consolidados em um repositorio unico na raiz do
 projeto. Backups locais dos historicos anteriores foram gerados em `.git-history/` e ficam fora do Git.
 
+## Infra com Docker
+
+Para subir PostgreSQL e Redis localmente:
+
+```powershell
+docker compose up -d postgres redis
+```
+
 ## Proxima etapa
 
-Implementar Redis para cache de metricas do dashboard, conforme briefing.
+Ampliar testes automatizados e, se necessario, empacotar a API em Docker.

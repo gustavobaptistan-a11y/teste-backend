@@ -6,6 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.core.auth import get_current_active_user
+from app.core.cache import DASHBOARD_METRICS_CACHE_KEY, delete_cache
 from app.core.database import get_db
 from app.models import ClienteModel, UsuarioModel
 from app.schemas.cliente import ClienteCreate, ClienteResponse, ClienteUpdate
@@ -33,6 +34,7 @@ def criar_cliente(
         )
 
     db.refresh(novo_cliente)
+    delete_cache(DASHBOARD_METRICS_CACHE_KEY)
     return novo_cliente
 
 
@@ -106,6 +108,7 @@ def editar_cliente(
 
     db.commit()
     db.refresh(cliente)
+    delete_cache(DASHBOARD_METRICS_CACHE_KEY)
     return cliente
 
 
@@ -125,4 +128,5 @@ def deletar_cliente(
 
     db.delete(cliente)
     db.commit()
+    delete_cache(DASHBOARD_METRICS_CACHE_KEY)
     return None

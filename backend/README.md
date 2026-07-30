@@ -17,6 +17,7 @@ Configure a conexao no arquivo `.env`:
 
 ```env
 DATABASE_URL=postgresql://usuario:senha@localhost:5432/lifeline_db
+REDIS_URL=redis://localhost:6379/0
 ```
 
 As tabelas `usuarios`, `clientes` e `leads` sao criadas automaticamente ao iniciar a API.
@@ -38,3 +39,10 @@ Acesse `http://127.0.0.1:5500`.
 
 O frontend possui login/cadastro, painel comercial protegido e tela de usuarios visivel apenas para
 administradores.
+
+## Redis
+
+O dashboard usa Redis para cache das metricas comerciais por 60 segundos. Alteracoes em clientes ou leads
+invalidam o cache automaticamente.
+
+Se o Redis nao estiver disponivel, a API continua funcionando e calcula as metricas direto do PostgreSQL.

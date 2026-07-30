@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.core.auth import get_current_active_user
+from app.core.cache import DASHBOARD_METRICS_CACHE_KEY, delete_cache
 from app.core.database import get_db
 from app.models import LeadModel, UsuarioModel
 from app.schemas.lead import LeadCreate, LeadResponse, LeadUpdateEtapa
@@ -31,6 +32,7 @@ def criar_lead(
     db.add(novo_lead)
     db.commit()
     db.refresh(novo_lead)
+    delete_cache(DASHBOARD_METRICS_CACHE_KEY)
     return novo_lead
 
 
@@ -52,6 +54,7 @@ def mover_lead(
     lead.etapa = payload.etapa
     db.commit()
     db.refresh(lead)
+    delete_cache(DASHBOARD_METRICS_CACHE_KEY)
     return lead
 
 
@@ -71,4 +74,5 @@ def deletar_lead(
 
     db.delete(lead)
     db.commit()
+    delete_cache(DASHBOARD_METRICS_CACHE_KEY)
     return None
