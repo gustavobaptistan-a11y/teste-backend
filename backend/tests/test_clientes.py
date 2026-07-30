@@ -9,9 +9,9 @@ def test_crud_completo_de_clientes(client):
         "nome": "Cliente Teste",
         "email": "cliente@teste.com",
         "telefone": "(11) 90000-0000",
-        "carteirinha": "CARD-001",
-        "convenio": "Lifeline",
-        "endereco": "Rua Teste, 100",
+        "empresa": "Empresa Teste",
+        "origem": "Indicacao",
+        "observacoes": "Contato comercial prioritario",
     }
 
     created = client.post("/clientes/", headers=headers, json=payload)
@@ -25,12 +25,13 @@ def test_crud_completo_de_clientes(client):
     updated_payload = {
         **payload,
         "nome": "Cliente Editado",
-        "convenio": "Lifeline Premium",
+        "empresa": "Empresa Editada",
         "ativo": False,
     }
     updated = client.put(f"/clientes/{cliente_id}", headers=headers, json=updated_payload)
     assert updated.status_code == 200
     assert updated.json()["nome"] == "Cliente Editado"
+    assert updated.json()["empresa"] == "Empresa Editada"
     assert updated.json()["ativo"] is False
 
     inactive = client.get("/clientes/?ativo=false&nome=Editado", headers=headers)

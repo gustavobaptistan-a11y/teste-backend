@@ -5,9 +5,9 @@ class ClienteBase(BaseModel):
     nome: str
     email: EmailStr
     telefone: str
-    carteirinha: str
-    convenio: str
-    endereco: str
+    empresa: str | None = None
+    origem: str | None = None
+    observacoes: str | None = None
 
 
 class ClienteCreate(ClienteBase):

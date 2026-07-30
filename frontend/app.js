@@ -158,7 +158,8 @@ function renderClientes() {
           <td>${cliente.nome}</td>
           <td>${cliente.email}</td>
           <td>${cliente.telefone}</td>
-          <td>${cliente.convenio}</td>
+          <td>${cliente.empresa || "-"}</td>
+          <td>${cliente.origem || "-"}</td>
           <td>${cliente.ativo ? "Ativo" : "Inativo"}</td>
           <td>
             <div class="row-actions">
@@ -178,10 +179,10 @@ function renderClienteDetail(cliente) {
     <div class="detail-item"><span>Nome</span><strong>${cliente.nome}</strong></div>
     <div class="detail-item"><span>E-mail</span><strong>${cliente.email}</strong></div>
     <div class="detail-item"><span>Telefone</span><strong>${cliente.telefone}</strong></div>
-    <div class="detail-item"><span>Carteirinha</span><strong>${cliente.carteirinha}</strong></div>
-    <div class="detail-item"><span>Convenio</span><strong>${cliente.convenio}</strong></div>
+    <div class="detail-item"><span>Empresa</span><strong>${cliente.empresa || "-"}</strong></div>
+    <div class="detail-item"><span>Origem</span><strong>${cliente.origem || "-"}</strong></div>
     <div class="detail-item"><span>Status</span><strong>${cliente.ativo ? "Ativo" : "Inativo"}</strong></div>
-    <div class="detail-item"><span>Endereco</span><strong>${cliente.endereco}</strong></div>
+    <div class="detail-item"><span>Observacoes</span><strong>${cliente.observacoes || "-"}</strong></div>
   `;
   els.clienteDetail.classList.remove("hidden");
 }
@@ -191,9 +192,9 @@ function fillClienteEditForm(cliente) {
   els.clienteEditForm.elements.nome.value = cliente.nome;
   els.clienteEditForm.elements.email.value = cliente.email;
   els.clienteEditForm.elements.telefone.value = cliente.telefone;
-  els.clienteEditForm.elements.carteirinha.value = cliente.carteirinha;
-  els.clienteEditForm.elements.convenio.value = cliente.convenio;
-  els.clienteEditForm.elements.endereco.value = cliente.endereco;
+  els.clienteEditForm.elements.empresa.value = cliente.empresa || "";
+  els.clienteEditForm.elements.origem.value = cliente.origem || "";
+  els.clienteEditForm.elements.observacoes.value = cliente.observacoes || "";
   els.clienteEditForm.elements.ativo.value = String(cliente.ativo);
   els.clienteEditForm.classList.remove("hidden");
   els.clienteDetail.classList.add("hidden");

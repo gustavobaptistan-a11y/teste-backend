@@ -29,6 +29,7 @@ Mapeamento dos requisitos do teste tecnico Lifeline One para a implementacao atu
 - [x] Excluir cliente.
 - [x] Filtrar por nome.
 - [x] Filtrar por status ativo/inativo.
+- [x] Campos comerciais: empresa, origem e observacoes.
 - [x] Persistencia em PostgreSQL.
 
 ## Modulo 3 - Kanban Comercial

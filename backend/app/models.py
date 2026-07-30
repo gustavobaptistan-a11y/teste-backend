@@ -22,9 +22,9 @@ class ClienteModel(Base):
     nome: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     telefone: Mapped[str] = mapped_column(String(50), nullable=False)
-    carteirinha: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
-    convenio: Mapped[str] = mapped_column(String(120), nullable=False)
-    endereco: Mapped[str] = mapped_column(Text, nullable=False)
+    empresa: Mapped[str | None] = mapped_column(String(255), nullable=True, index=True)
+    origem: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    observacoes: Mapped[str | None] = mapped_column(Text, nullable=True)
     ativo: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
 

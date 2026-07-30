@@ -11,12 +11,14 @@ from app.api.kanban import router as kanban_router
 from app.api.usuarios import router as usuarios_router
 from app.core.config import settings
 from app.core.database import Base, engine
+from app.core.migrations import ensure_cliente_crm_columns
 from app import models
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
+    ensure_cliente_crm_columns(engine)
     yield
 
 

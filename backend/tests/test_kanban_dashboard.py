@@ -12,9 +12,9 @@ def test_cria_move_exclui_lead_e_atualiza_dashboard(client):
             "nome": "Cliente Dashboard",
             "email": "dashboard@teste.com",
             "telefone": "(11) 91111-1111",
-            "carteirinha": "DASH-001",
-            "convenio": "Lifeline",
-            "endereco": "Rua Dashboard, 1",
+            "empresa": "Empresa Dashboard",
+            "origem": "Site",
+            "observacoes": "Cliente de teste para metricas",
         },
     )
     assert cliente.status_code == 201

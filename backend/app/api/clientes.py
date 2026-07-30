@@ -1,7 +1,6 @@
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import or_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -30,7 +29,7 @@ def criar_cliente(
         db.rollback()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Ja existe um cliente com este email ou carteirinha.",
+            detail="Ja existe um cliente com este email.",
         )
 
     db.refresh(novo_cliente)
@@ -88,19 +87,13 @@ def editar_cliente(
 
     conflito = (
         db.query(ClienteModel)
-        .filter(
-            ClienteModel.id != cliente_id,
-            or_(
-                ClienteModel.email == cliente_atualizado.email,
-                ClienteModel.carteirinha == cliente_atualizado.carteirinha,
-            ),
-        )
+        .filter(ClienteModel.id != cliente_id, ClienteModel.email == cliente_atualizado.email)
         .first()
     )
     if conflito:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Ja existe outro cliente com este email ou carteirinha.",
+            detail="Ja existe outro cliente com este email.",
         )
 
     for campo, valor in cliente_atualizado.model_dump().items():
