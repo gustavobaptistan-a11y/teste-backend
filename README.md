@@ -13,9 +13,8 @@ frontend/  Interface React + Vite com login, dashboard, clientes, kanban e usuar
 
 Checklist minucioso do briefing: `docs/BRIEFING_CHECKLIST.md`.
 Roteiro de code review: `docs/CODE_REVIEW.md`.
-Guia de deploy: `docs/DEPLOY.md`.
-Roteiro final de publicacao segura: `docs/DEPLOY_FINAL.md`.
 Deploy local para apresentacao no PC: `docs/DEPLOY_LOCAL.md`.
+Guias opcionais para publicacao posterior: `docs/DEPLOY.md` e `docs/DEPLOY_FINAL.md`.
 
 ## Requisitos atendidos
 
@@ -39,6 +38,8 @@ Deploy local para apresentacao no PC: `docs/DEPLOY_LOCAL.md`.
 
 ## Backend
 
+Para a apresentacao local completa, siga primeiro `docs/DEPLOY_LOCAL.md`.
+
 ```powershell
 cd backend
 ..\.venv\Scripts\Activate.ps1
@@ -46,12 +47,12 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-A API fica em `http://127.0.0.1:8000`.
+A API local fica em `http://127.0.0.1:8010`.
 
 Swagger:
 
 ```text
-http://127.0.0.1:8000/docs
+http://127.0.0.1:8010/docs
 ```
 
 Configure `backend/.env`:
@@ -79,6 +80,8 @@ cd backend
 
 ## Frontend
 
+Com o backend local em execucao, abra outro terminal:
+
 ```powershell
 cd frontend
 npm install
@@ -92,7 +95,7 @@ http://127.0.0.1:5500
 ```
 
 Configure a URL da API em `frontend/public/config.js` quando mudar de ambiente.
-Use `frontend/public/config.example.js` como referencia para producao e aponte sempre para uma API em HTTPS.
+Para a apresentacao no PC, `frontend/public/config.js` deve apontar para `http://127.0.0.1:8010`.
 
 Validacoes do frontend:
 
@@ -103,17 +106,15 @@ npm run test:security
 npm run build
 ```
 
-Para publicar o frontend estatico com headers de seguranca, use `frontend/nginx.example.conf` como base
-ou replique os mesmos headers no provedor escolhido.
-
 ## Historico
 
 Os repositorios separados de `backend` e `frontend` foram consolidados em um repositorio unico na raiz do
 projeto. Backups locais dos historicos anteriores foram gerados em `.git-history/` e ficam fora do Git.
 
-## Infra com Docker
+## Infra com Docker Opcional
 
-Para subir API, PostgreSQL e Redis:
+Docker nao e obrigatorio para a apresentacao local se o backend e o frontend forem iniciados pelos scripts.
+Se quiser subir API, PostgreSQL e Redis em containers:
 
 ```powershell
 copy .env.example .env
@@ -122,4 +123,4 @@ docker compose up -d --build
 
 ## Proxima etapa
 
-Publicar o deploy final, se desejado, usando HTTPS e headers de seguranca no frontend.
+Para apresentar ao avaliador na propria maquina, rode `docs/DEPLOY_LOCAL.md` e use as URLs locais.

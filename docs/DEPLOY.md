@@ -32,6 +32,8 @@ docker compose up -d --build
 http://servidor:8000/docs
 ```
 
+No `docker-compose.yml`, apenas a API publica porta no host. PostgreSQL e Redis ficam acessiveis somente pela rede interna do Docker.
+
 4. Configure `frontend/public/config.js` com a URL publica da API em HTTPS:
 
 ```js
@@ -73,9 +75,11 @@ Para a entrega final em HTTPS, siga tambem `docs/DEPLOY_FINAL.md`.
 - [ ] Usar senha URL-encoded dentro de `DATABASE_URL` se ela tiver caracteres especiais.
 - [ ] Definir `CORS_ORIGINS` com a URL real do frontend.
 - [ ] Configurar `frontend/public/config.js` com a URL HTTPS real da API antes do build.
-- [ ] Servir o frontend com `Content-Security-Policy`, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy` e `Permissions-Policy`.
+- [ ] Servir o frontend em HTTPS com `Content-Security-Policy`, `Strict-Transport-Security`, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy` e `Permissions-Policy`.
+- [ ] Confirmar que PostgreSQL e Redis nao estao publicados diretamente na internet.
 - [ ] Confirmar que `.env` nao esta versionado.
 - [ ] Rodar `pytest -q`.
+- [ ] Rodar `pip-audit` quando a ferramenta estiver disponivel no ambiente Python.
 - [ ] Rodar `npm run check`, `npm run test:security` e `npm run build` dentro de `frontend`.
 - [ ] Confirmar que o primeiro usuario admin foi criado.
 - [ ] Testar login, dashboard, clientes, kanban e usuarios no ambiente publicado.

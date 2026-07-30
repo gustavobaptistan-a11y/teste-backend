@@ -1,3 +1,7 @@
+param(
+  [int]$Port = 8010
+)
+
 $ErrorActionPreference = "Stop"
 
 $root = Resolve-Path (Join-Path $PSScriptRoot "..")
@@ -13,4 +17,4 @@ if (-not (Test-Path -LiteralPath (Join-Path $backend ".env"))) {
 }
 
 Set-Location $backend
-& $python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+& $python -m uvicorn app.main:app --host 127.0.0.1 --port $Port --reload

@@ -41,6 +41,8 @@ docker build -t lifeline-api ./backend
 docker run --env-file .env -p 8000:8000 lifeline-api
 ```
 
+Quando usar `docker-compose.yml`, mantenha somente a API publicada no host. PostgreSQL e Redis devem ficar restritos a rede interna do Docker ou em servicos gerenciados privados.
+
 Antes de liberar o acesso ao avaliador, rode a migracao no ambiente publicado:
 
 ```bash
@@ -111,6 +113,9 @@ https://api.seu-dominio.com
 - [ ] Usuarios e Acessos visivel apenas para Administrador.
 - [ ] Usuario comum recebe bloqueio em rotas administrativas.
 - [ ] Headers de seguranca aplicados no frontend.
+- [ ] HSTS aplicado no host HTTPS do frontend.
+- [ ] PostgreSQL e Redis sem porta publica exposta.
+- [ ] Auditoria de dependencias Python executada com `pip-audit`, quando disponivel.
 - [ ] Rotas privadas retornam `401` sem token.
 
 ## Entrega ao Avaliador

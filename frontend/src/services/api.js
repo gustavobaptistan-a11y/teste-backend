@@ -19,7 +19,7 @@ export async function apiRequest(path, { token, onUnauthorized, ...options } = {
   try {
     response = await fetch(`${resolveApiBase()}${path}`, { ...options, headers });
   } catch {
-    throw new Error("API indisponivel. Inicie o backend em http://127.0.0.1:8000.");
+    throw new Error("API indisponivel. Inicie o backend em http://127.0.0.1:8010.");
   }
 
   if (response.status === 204) {

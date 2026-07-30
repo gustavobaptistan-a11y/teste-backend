@@ -1,14 +1,15 @@
 # Deploy Local no PC
 
 Este roteiro e o formato combinado para apresentar o teste no seu proprio computador, sem provedor pago.
+Docker nao e obrigatorio para este roteiro. Use os scripts locais abaixo para subir backend e frontend.
 
 ## URLs da Demonstracao
 
 ```text
 Frontend: http://127.0.0.1:5500
-API:      http://127.0.0.1:8000
-Swagger:  http://127.0.0.1:8000/docs
-Health:   http://127.0.0.1:8000/health
+API:      http://127.0.0.1:8010
+Swagger:  http://127.0.0.1:8010/docs
+Health:   http://127.0.0.1:8010/health
 ```
 
 ## 1. Configurar PostgreSQL Local
@@ -65,7 +66,7 @@ Abra um terminal:
 Confirme:
 
 ```text
-http://127.0.0.1:8000/health
+http://127.0.0.1:8010/health
 ```
 
 ## 4. Iniciar Frontend
@@ -87,6 +88,8 @@ http://127.0.0.1:5500
 ```powershell
 .\scripts\check-local.ps1
 ```
+
+Se o script avisar que API ou frontend nao responderam, inicie os dois terminais dos passos 3 e 4 e rode a validacao novamente.
 
 ## Redis no Deploy Local
 
@@ -121,3 +124,13 @@ DATABASE_URL=postgresql+psycopg://lifeline_user:senha@127.0.0.1:5432/lifeline_db
 6. Criar oportunidade no Kanban e mover entre etapas.
 7. Mostrar Usuarios e Acessos como Administrador.
 8. Mostrar Swagger e testar rota privada sem token retornando `401`.
+
+## Entrega na Maquina
+
+Antes da avaliacao, deixe prontos:
+
+- Um terminal rodando `.\scripts\start-local-backend.ps1`.
+- Um terminal rodando `.\scripts\start-local-frontend.ps1`.
+- Navegador aberto em `http://127.0.0.1:5500`.
+- Swagger disponivel em `http://127.0.0.1:8010/docs`.
+- Credenciais de um usuario administrador de teste, se a base ja nao estiver vazia.

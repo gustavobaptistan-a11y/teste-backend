@@ -9,6 +9,17 @@ Write-Host "Testando backend..."
 Set-Location $backend
 & $python -m pytest -q
 
+Write-Host "Auditando dependencias Python..."
+$auditAvailable = & $python -c "import importlib.util; raise SystemExit(0 if importlib.util.find_spec('pip_audit') else 1)"
+if ($LASTEXITCODE -eq 0) {
+  & $python -m pip_audit
+  if ($LASTEXITCODE -ne 0) {
+    Write-Warning "pip-audit encontrou vulnerabilidades. Revise a saida acima."
+  }
+} else {
+  Write-Warning "pip-audit nao esta instalado. Instale com: $python -m pip install pip-audit"
+}
+
 Write-Host "Testando frontend..."
 Set-Location $frontend
 npm run check
@@ -16,9 +27,9 @@ npm run test:security
 
 Write-Host "Verificando servicos locais..."
 try {
-  Invoke-RestMethod -Uri "http://127.0.0.1:8000/health" -Method Get | ConvertTo-Json
+  Invoke-RestMethod -Uri "http://127.0.0.1:8010/health" -Method Get | ConvertTo-Json
 } catch {
-  Write-Warning "API nao respondeu em http://127.0.0.1:8000/health. Inicie scripts\start-local-backend.ps1."
+  Write-Warning "API nao respondeu em http://127.0.0.1:8010/health. Inicie scripts\start-local-backend.ps1."
 }
 
 try {

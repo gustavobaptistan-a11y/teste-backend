@@ -19,6 +19,29 @@ from app.schemas.usuario import (
 router = APIRouter(prefix="/usuarios", tags=["Usuarios"])
 
 
+def usuario_e_unico_admin_ativo(db: Session, usuario: UsuarioModel) -> bool:
+    if usuario.permissao != "Administrador" or not usuario.ativo:
+        return False
+
+    total_admins_ativos = (
+        db.query(UsuarioModel)
+        .filter(
+            UsuarioModel.permissao == "Administrador",
+            UsuarioModel.ativo.is_(True),
+        )
+        .count()
+    )
+    return total_admins_ativos <= 1
+
+
+def rejeitar_remocao_ultimo_admin_ativo(db: Session, usuario: UsuarioModel) -> None:
+    if usuario_e_unico_admin_ativo(db, usuario):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="O sistema precisa manter ao menos um administrador ativo.",
+        )
+
+
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=UsuarioResponse)
 def cadastrar_usuario(
     usuario: UsuarioCreate,
@@ -99,6 +122,8 @@ def editar_usuario(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Voce nao pode desativar a propria conta.",
         )
+    if payload.permissao != "Administrador" or not payload.ativo:
+        rejeitar_remocao_ultimo_admin_ativo(db, usuario)
 
     email_em_uso = (
         db.query(UsuarioModel)
@@ -131,6 +156,9 @@ def alterar_permissao(
     if not usuario:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario nao encontrado.")
 
+    if payload.permissao != "Administrador":
+        rejeitar_remocao_ultimo_admin_ativo(db, usuario)
+
     usuario.permissao = payload.permissao
     db.commit()
     db.refresh(usuario)
@@ -154,6 +182,8 @@ def alterar_status(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Voce nao pode desativar a propria conta.",
         )
+    if not payload.ativo:
+        rejeitar_remocao_ultimo_admin_ativo(db, usuario)
 
     usuario.ativo = payload.ativo
     db.commit()

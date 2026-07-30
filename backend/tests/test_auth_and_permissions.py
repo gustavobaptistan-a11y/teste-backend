@@ -95,6 +95,51 @@ def test_admin_altera_permissao_e_edita_usuario(client):
     assert updated.json()["email"] == "editado@teste.com"
 
 
+def test_nao_permite_remover_ultimo_admin_ativo(client):
+    admin = create_user(client, "admin@teste.com").json()
+    admin_headers = login_headers(client, "admin@teste.com")
+
+    rebaixar = client.patch(
+        f"/usuarios/{admin['id']}/permissao",
+        headers=admin_headers,
+        json={"permissao": "Usuario Comum"},
+    )
+    assert rebaixar.status_code == 400
+
+    editar = client.put(
+        f"/usuarios/{admin['id']}",
+        headers=admin_headers,
+        json={
+            "nome": admin["nome"],
+            "email": admin["email"],
+            "permissao": "Usuario Comum",
+            "ativo": True,
+        },
+    )
+    assert editar.status_code == 400
+
+
+def test_permite_rebaixar_admin_quando_existe_outro_admin_ativo(client):
+    admin = create_user(client, "admin@teste.com").json()
+    admin_headers = login_headers(client, "admin@teste.com")
+    segundo_admin = create_user(client, "segundo@teste.com", headers=admin_headers).json()
+
+    promovido = client.patch(
+        f"/usuarios/{segundo_admin['id']}/permissao",
+        headers=admin_headers,
+        json={"permissao": "Administrador"},
+    )
+    assert promovido.status_code == 200
+
+    rebaixado = client.patch(
+        f"/usuarios/{admin['id']}/permissao",
+        headers=admin_headers,
+        json={"permissao": "Usuario Comum"},
+    )
+    assert rebaixado.status_code == 200
+    assert rebaixado.json()["permissao"] == "Usuario Comum"
+
+
 def test_logout_revoga_token(client, monkeypatch):
     revoked_keys = set()
 
