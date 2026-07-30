@@ -22,6 +22,7 @@ frontend/  Interface web estatica com login, dashboard, clientes, kanban e usuar
 - Dashboard comercial com metricas consolidadas.
 - PostgreSQL como banco relacional.
 - Redis para cache de metricas do dashboard.
+- Testes automatizados cobrindo autenticacao, permissoes e CRUD de clientes.
 
 ## Backend
 
@@ -45,10 +46,22 @@ Configure `backend/.env`:
 ```env
 DATABASE_URL=postgresql://usuario:senha@localhost:5432/lifeline_db
 REDIS_URL=redis://localhost:6379/0
+SECRET_KEY=troque-esta-chave-em-producao
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+CORS_ORIGINS=http://127.0.0.1:5500,http://localhost:5500
+SQL_ECHO=false
 ```
 
 O primeiro usuario cadastrado recebe permissao `Administrador`. Os proximos entram como
 `Usuario Comum`.
+
+Testes:
+
+```powershell
+cd backend
+..\.venv\Scripts\python.exe -m pytest -q
+```
 
 ## Frontend
 
@@ -70,12 +83,12 @@ projeto. Backups locais dos historicos anteriores foram gerados em `.git-history
 
 ## Infra com Docker
 
-Para subir PostgreSQL e Redis localmente:
+Para subir API, PostgreSQL e Redis:
 
 ```powershell
-docker compose up -d postgres redis
+docker compose up -d --build
 ```
 
 ## Proxima etapa
 
-Ampliar testes automatizados e, se necessario, empacotar a API em Docker.
+Preparar roteiro de entrega/code review e, se desejado, publicar o deploy.

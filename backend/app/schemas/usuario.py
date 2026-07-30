@@ -1,6 +1,6 @@
 from typing import Literal
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 PermissaoUsuario = Literal["Administrador", "Usuario Comum"]
 
@@ -27,11 +27,10 @@ class UsuarioStatusUpdate(BaseModel):
 
 
 class UsuarioResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     nome: str
     email: EmailStr
     permissao: PermissaoUsuario
     ativo: bool
-
-    class Config:
-        from_attributes = True

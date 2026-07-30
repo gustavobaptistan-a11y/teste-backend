@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class LeadBase(BaseModel):
@@ -20,10 +20,9 @@ class LeadUpdateEtapa(BaseModel):
 
 
 class LeadResponse(LeadBase):
-    id: int
+    model_config = ConfigDict(from_attributes=True)
 
-    class Config:
-        from_attributes = True
+    id: int
 
 
 Lead = LeadResponse

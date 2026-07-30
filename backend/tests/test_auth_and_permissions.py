@@ -1,0 +1,51 @@
+from tests.conftest import create_user, login_headers
+
+
+def test_primeiro_usuario_vira_administrador(client):
+    response = create_user(client, "admin@teste.com")
+
+    assert response.status_code == 201
+    assert response.json()["permissao"] == "Administrador"
+
+
+def test_segundo_usuario_vira_usuario_comum(client):
+    create_user(client, "admin@teste.com")
+    response = create_user(client, "user@teste.com")
+
+    assert response.status_code == 201
+    assert response.json()["permissao"] == "Usuario Comum"
+
+
+def test_dashboard_exige_token(client):
+    response = client.get("/dashboard/metricas")
+
+    assert response.status_code == 401
+
+
+def test_admin_lista_usuarios_e_usuario_comum_recebe_403(client):
+    create_user(client, "admin@teste.com")
+    create_user(client, "user@teste.com")
+
+    admin_headers = login_headers(client, "admin@teste.com")
+    user_headers = login_headers(client, "user@teste.com")
+
+    assert client.get("/usuarios/", headers=admin_headers).status_code == 200
+    assert client.get("/usuarios/", headers=user_headers).status_code == 403
+
+
+def test_usuario_inativo_nao_consegue_logar(client):
+    admin = create_user(client, "admin@teste.com").json()
+    user = create_user(client, "user@teste.com").json()
+    admin_headers = login_headers(client, admin["email"])
+
+    response = client.patch(
+        f"/usuarios/{user['id']}/status",
+        headers=admin_headers,
+        json={"ativo": False},
+    )
+
+    assert response.status_code == 200
+    assert client.post(
+        "/auth/token",
+        data={"username": user["email"], "password": "senha123"},
+    ).status_code == 403

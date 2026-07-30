@@ -18,6 +18,11 @@ Configure a conexao no arquivo `.env`:
 ```env
 DATABASE_URL=postgresql://usuario:senha@localhost:5432/lifeline_db
 REDIS_URL=redis://localhost:6379/0
+SECRET_KEY=troque-esta-chave-em-producao
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+CORS_ORIGINS=http://127.0.0.1:5500,http://localhost:5500
+SQL_ECHO=false
 ```
 
 As tabelas `usuarios`, `clientes` e `leads` sao criadas automaticamente ao iniciar a API.
@@ -46,3 +51,12 @@ O dashboard usa Redis para cache das metricas comerciais por 60 segundos. Altera
 invalidam o cache automaticamente.
 
 Se o Redis nao estiver disponivel, a API continua funcionando e calcula as metricas direto do PostgreSQL.
+
+## Testes
+
+```bash
+cd backend
+..\.venv\Scripts\python.exe -m pytest -q
+```
+
+Os testes rodam com SQLite isolado e cobrem autenticacao, permissoes administrativas e CRUD de clientes.

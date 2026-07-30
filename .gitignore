@@ -8,6 +8,7 @@ __pycache__/
 
 .env
 *.log
+*.db
 node_modules/
 dist/
 build/
