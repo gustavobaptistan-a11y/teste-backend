@@ -71,12 +71,18 @@ async function request(path, options = {}) {
     headers.Authorization = `Bearer ${state.token}`;
   }
 
-  const response = await fetch(apiUrl(path), { ...options, headers });
+  let response;
+  try {
+    response = await fetch(apiUrl(path), { ...options, headers });
+  } catch {
+    throw new Error("API indisponivel. Inicie o backend em http://127.0.0.1:8000.");
+  }
+
   if (response.status === 204) {
     return null;
   }
 
-  const data = await response.json();
+  const data = await response.json().catch(() => ({}));
   if (!response.ok) {
     if (response.status === 401) {
       logout(false);
