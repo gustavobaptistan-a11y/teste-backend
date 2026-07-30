@@ -1,23 +1,26 @@
 :root {
   color-scheme: light;
-  --bg: #eef3f5;
+  --bg: #edf4fd;
   --surface: #ffffff;
-  --surface-muted: #f7fafb;
-  --ink: #172126;
-  --muted: #66757d;
-  --line: #d8e2e6;
-  --line-strong: #c5d3d8;
-  --teal: #007c89;
-  --teal-dark: #005f68;
-  --teal-soft: #dceff0;
-  --green: #247357;
-  --green-soft: #e3f3ec;
-  --coral: #bd5648;
-  --coral-soft: #f8e8e4;
-  --amber: #a66f0f;
-  --amber-soft: #fff1d6;
-  --indigo: #435a8b;
-  --shadow: 0 16px 42px rgba(23, 33, 38, 0.08);
+  --surface-muted: #f7faff;
+  --ink: #111827;
+  --muted: #7b8ca7;
+  --line: #dbe6f3;
+  --line-strong: #cbd8ea;
+  --teal: #256bd9;
+  --teal-dark: #1d56b4;
+  --teal-soft: #e8f1ff;
+  --green: #008758;
+  --green-soft: #e4f8ef;
+  --coral: #e11d48;
+  --coral-soft: #fff0f3;
+  --amber: #b7791f;
+  --amber-soft: #fff6df;
+  --indigo: #5a6da1;
+  --sidebar: #27313e;
+  --sidebar-deep: #202936;
+  --sidebar-muted: #aeb8c7;
+  --shadow: 0 18px 48px rgba(31, 48, 73, 0.1);
 }
 
 * {
@@ -67,7 +70,7 @@ button {
 button:focus-visible,
 input:focus-visible,
 select:focus-visible {
-  outline: 3px solid rgba(0, 124, 137, 0.22);
+  outline: 3px solid rgba(37, 107, 217, 0.24);
   outline-offset: 2px;
 }
 
@@ -79,14 +82,14 @@ select:focus-visible {
   display: flex;
   flex-direction: column;
   gap: 28px;
-  background: #10272d;
+  background: var(--sidebar);
   color: #fff;
   box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.06);
 }
 
 .eyebrow {
   margin: 0 0 7px;
-  color: #6fc6c6;
+  color: #8fa7ca;
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0;
@@ -131,14 +134,15 @@ button:disabled {
 .nav-button {
   padding: 0 12px;
   background: transparent;
-  color: #c6dfe1;
+  color: var(--sidebar-muted);
   text-align: left;
 }
 
 .nav-button.active,
 .nav-button:hover {
-  background: #1c454d;
+  background: var(--teal);
   color: #fff;
+  box-shadow: 0 10px 24px rgba(37, 107, 217, 0.2);
 }
 
 .user-box {
@@ -146,10 +150,10 @@ button:disabled {
   gap: 5px;
   margin-top: auto;
   padding: 14px 12px;
-  border: 1px solid rgba(198, 223, 225, 0.18);
+  border: 1px solid rgba(174, 184, 199, 0.18);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.05);
-  color: #c6dfe1;
+  color: var(--sidebar-muted);
   font-size: 13px;
 }
 
@@ -219,7 +223,7 @@ button:disabled {
   padding: 0 16px;
   background: var(--teal);
   color: #fff;
-  box-shadow: 0 8px 20px rgba(0, 124, 137, 0.14);
+  box-shadow: 0 10px 24px rgba(37, 107, 217, 0.2);
 }
 
 .primary-button:hover {
@@ -231,12 +235,12 @@ button:disabled {
   padding: 0 11px;
   background: var(--surface-muted);
   border-color: var(--line);
-  color: var(--teal-dark);
+  color: var(--teal);
 }
 
 .ghost-button:hover {
   background: var(--teal-soft);
-  border-color: #b8d9dc;
+  border-color: #bdd2f7;
 }
 
 .danger-button {
@@ -294,7 +298,7 @@ button:disabled {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--surface);
-  box-shadow: 0 10px 26px rgba(23, 33, 38, 0.05);
+  box-shadow: 0 12px 28px rgba(31, 48, 73, 0.06);
 }
 
 .metric {
@@ -361,7 +365,7 @@ button:disabled {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--surface);
-  box-shadow: 0 10px 26px rgba(23, 33, 38, 0.05);
+  box-shadow: 0 12px 28px rgba(31, 48, 73, 0.06);
 }
 
 .form-grid {
@@ -448,7 +452,7 @@ select {
 }
 
 input::placeholder {
-  color: #74838a;
+  color: #9aabc4;
 }
 
 select {
@@ -460,7 +464,7 @@ select {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--surface);
-  box-shadow: 0 10px 26px rgba(23, 33, 38, 0.05);
+  box-shadow: 0 12px 28px rgba(31, 48, 73, 0.06);
 }
 
 table {
@@ -486,7 +490,7 @@ th {
 }
 
 td {
-  color: #26353b;
+  color: #24324a;
 }
 
 tr:last-child td {
@@ -494,7 +498,7 @@ tr:last-child td {
 }
 
 tbody tr:hover {
-  background: #fbfdfd;
+  background: #f7faff;
 }
 
 .row-actions {
@@ -535,8 +539,8 @@ tbody tr:hover {
   min-height: 390px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #f1f6f7;
-  box-shadow: 0 10px 26px rgba(23, 33, 38, 0.05);
+  background: #f3f7fd;
+  box-shadow: 0 12px 28px rgba(31, 48, 73, 0.06);
 }
 
 .kanban-column header {
@@ -561,7 +565,7 @@ tbody tr:hover {
   place-items: center;
   border-radius: 999px;
   background: var(--teal-soft);
-  color: var(--teal-dark);
+  color: var(--teal);
   font-size: 13px;
 }
 
@@ -624,7 +628,7 @@ tbody tr:hover {
   display: grid;
   place-items: center;
   padding: 20px;
-  background: rgba(16, 39, 45, 0.58);
+  background: rgba(32, 41, 54, 0.58);
 }
 
 .modal.hidden {
