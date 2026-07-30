@@ -177,7 +177,7 @@ nav {
 .ghost-button {
   min-height: 40px;
   border: 1px solid transparent;
-  border-radius: 6px;
+  border-radius: 999px;
   cursor: pointer;
   font-weight: 800;
 }
@@ -545,22 +545,28 @@ button:disabled {
 }
 
 .primary-button {
-  padding: 0 16px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0 20px;
   background: var(--blue-gradient);
   color: #fff;
-  box-shadow: 0 10px 24px rgba(37, 107, 217, 0.2);
+  box-shadow: 0 12px 24px rgba(15, 90, 184, 0.24);
 }
 
 .primary-button:hover {
   background: var(--blue-gradient-hover);
   transform: translateY(-1px);
+  box-shadow: 0 16px 30px rgba(15, 90, 184, 0.3);
 }
 
 .ghost-button {
-  padding: 0 11px;
-  background: var(--surface-muted);
+  display: inline-grid;
+  place-items: center;
+  padding: 0 16px;
+  background: #f7fbff;
   border-color: var(--line);
   color: var(--teal);
+  box-shadow: 0 8px 18px rgba(31, 48, 73, 0.06);
 }
 
 .icon-button {
@@ -623,17 +629,20 @@ button:disabled {
 }
 
 .ghost-button:hover {
-  background: var(--teal-soft);
+  background: #eef6ff;
   border-color: #bdd2f7;
+  transform: translateY(-1px);
 }
 
 .danger-button {
+  background: #fff7f9;
+  border-color: #ffd3dd;
   color: var(--coral);
 }
 
 .danger-button:hover {
   background: var(--coral-soft);
-  border-color: #efc7bf;
+  border-color: #ffb8c8;
 }
 
 .status {
@@ -896,7 +905,7 @@ tbody tr:hover {
 .row-actions .ghost-button,
 .lead-actions .ghost-button {
   min-height: 34px;
-  padding: 0 9px;
+  padding: 0 12px;
   font-size: 13px;
 }
 
