@@ -53,3 +53,10 @@ CORS_ORIGINS=
 - [ ] Rodar `pytest -q`.
 - [ ] Confirmar que o primeiro usuario admin foi criado.
 - [ ] Testar login, dashboard, clientes, kanban e usuarios no ambiente publicado.
+
+## GitHub
+
+A versao fullstack foi publicada na branch `fullstack-main`.
+
+O `main` remoto ainda preserva o historico antigo do backend. Para tornar a versao fullstack a principal,
+abra um pull request da branch `fullstack-main` ou atualize a branch padrao do repositorio no GitHub.
