@@ -129,65 +129,90 @@ function AuthView({ setupOpen, onLogin, onRegister, onError, status }) {
   return (
     <main className="app-shell">
       <section className="auth-view">
+        <div className="auth-brand" aria-label="Lifeline One">
+          <div className="brand-mark" aria-hidden="true">
+            L1
+          </div>
+          <strong>Lifeline One</strong>
+        </div>
         <div className="auth-panel">
-          <p className="eyebrow">Acesso seguro</p>
-          <h2>Entrar no painel</h2>
+          <h2>Bem-vindo de volta</h2>
+          <p className="auth-copy">Acesse o painel comercial da sua equipe.</p>
           <form className="auth-form" onSubmit={submitLogin}>
-            <input
-              value={login.email}
-              onChange={(event) => setLogin({ ...login, email: event.target.value })}
-              type="email"
-              placeholder="E-mail"
-              autoComplete="username"
-              required
-            />
-            <input
-              value={login.senha}
-              onChange={(event) => setLogin({ ...login, senha: event.target.value })}
-              type="password"
-              placeholder="Senha"
-              autoComplete="current-password"
-              required
-            />
-            <button className="primary-button" type="submit">
-              Entrar
+            <label className="auth-field">
+              <span>E-mail corporativo</span>
+              <input
+                value={login.email}
+                onChange={(event) => setLogin({ ...login, email: event.target.value })}
+                type="email"
+                placeholder="voce@empresa.com"
+                autoComplete="username"
+                required
+              />
+            </label>
+            <label className="auth-field">
+              <span>Senha</span>
+              <input
+                value={login.senha}
+                onChange={(event) => setLogin({ ...login, senha: event.target.value })}
+                type="password"
+                placeholder="********"
+                autoComplete="current-password"
+                required
+              />
+            </label>
+            <div className="auth-options">
+              <span>Sessao por aba</span>
+              <span>Senha protegida</span>
+            </div>
+            <button className="primary-button auth-submit" type="submit">
+              Entrar no painel <span aria-hidden="true">-&gt;</span>
             </button>
           </form>
 
           {setupOpen && (
-            <section>
+            <section className="setup-panel">
               <div className="divider" />
-              <p className="eyebrow">Primeiro acesso</p>
+              <p className="setup-copy">Novo na equipe? Crie o administrador inicial.</p>
               <form className="auth-form" onSubmit={submitRegister}>
-                <input
-                  value={register.nome}
-                  onChange={(event) => setRegister({ ...register, nome: event.target.value })}
-                  placeholder="Nome"
-                  autoComplete="name"
-                  required
-                />
-                <input
-                  value={register.email}
-                  onChange={(event) => setRegister({ ...register, email: event.target.value })}
-                  type="email"
-                  placeholder="E-mail"
-                  autoComplete="username"
-                  required
-                />
-                <input
-                  value={register.senha}
-                  onChange={(event) => setRegister({ ...register, senha: event.target.value })}
-                  type="password"
-                  placeholder="Senha forte"
-                  autoComplete="new-password"
-                  minLength="8"
-                  required
-                />
+                <label className="auth-field">
+                  <span>Nome</span>
+                  <input
+                    value={register.nome}
+                    onChange={(event) => setRegister({ ...register, nome: event.target.value })}
+                    placeholder="Nome completo"
+                    autoComplete="name"
+                    required
+                  />
+                </label>
+                <label className="auth-field">
+                  <span>E-mail corporativo</span>
+                  <input
+                    value={register.email}
+                    onChange={(event) => setRegister({ ...register, email: event.target.value })}
+                    type="email"
+                    placeholder="voce@empresa.com"
+                    autoComplete="username"
+                    required
+                  />
+                </label>
+                <label className="auth-field">
+                  <span>Senha forte</span>
+                  <input
+                    value={register.senha}
+                    onChange={(event) => setRegister({ ...register, senha: event.target.value })}
+                    type="password"
+                    placeholder="********"
+                    autoComplete="new-password"
+                    minLength="8"
+                    required
+                  />
+                </label>
                 <span className={`password-hint ${register.senha ? (strongPassword(register.senha) ? "ok" : "error") : ""}`}>
                   {passwordMessage(register.senha)}
                 </span>
-                <button className="ghost-button" type="submit">
-                  Cadastrar administrador
+                <button className="ghost-button setup-submit" type="submit">
+                  Criar conta
                 </button>
               </form>
             </section>
@@ -197,6 +222,9 @@ function AuthView({ setupOpen, onLogin, onRegister, onError, status }) {
       <section className={`status ${status.ok ? "ok" : ""}`} aria-live="polite">
         {status.message}
       </section>
+      <footer className="auth-footer">
+        Desenvolvido por <strong>LIFELINEONE</strong>
+      </footer>
     </main>
   );
 }
